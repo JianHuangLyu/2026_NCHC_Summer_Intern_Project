@@ -387,8 +387,8 @@ GitHub Actions 會在 push 與 pull request 時執行相同的依賴安裝、Slu
 - [`server_endpoint/TECHNOLOGY_STACK.md`](server_endpoint/TECHNOLOGY_STACK.md)：技術棧與元件責任。
 - [`server_endpoint/docs/PROJECT_GUIDE.md`](server_endpoint/docs/PROJECT_GUIDE.md)：維運、交接與資料治理。
 
-## 參考資料
+## References
 
-1. Zhong, C. 等人，[PathVG: A New Benchmark and Dataset for Pathology Visual Grounding](https://arxiv.org/abs/2502.20869)，RefPath 資料集與病理視覺定位基準。
-2. Yang, Y. 等人，[SkillOpt: Executive Strategy for Self-Evolving Agent Skills](https://arxiv.org/abs/2605.23904)，以凍結模型及可最佳化文字技能進行外部參數學習。
-3. Sellergren, A. 等人，[MedGemma 1.5 Technical Report](https://arxiv.org/abs/2604.05081)，醫療多模態教師模型相關技術報告。
+1. Zhong, C., et al. [PathVG: A New Benchmark and Dataset for Pathology Visual Grounding](https://arxiv.org/abs/2502.20869). A pathology visual grounding benchmark and the source of the RefPath dataset.
+2. Yang, Y., et al. [SkillOpt: Executive Strategy for Self-Evolving Agent Skills](https://arxiv.org/abs/2605.23904). A text-space optimization framework for improving external skills while keeping model weights frozen.
+3. Sellergren, A., et al. [MedGemma 1.5 Technical Report](https://arxiv.org/abs/2604.05081). The technical report for the medical multimodal teacher model used in this project.
