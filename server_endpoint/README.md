@@ -6,6 +6,7 @@ Windows 使用者端位於 repo 根目錄的 [`client_endpoint/`](../client_endp
 
 > 本系統是研究用途的非診斷性工具，所有輸出都必須由合格專業人員複核。
 
+
 ## 目錄
 
 ```text
@@ -22,6 +23,7 @@ server_endpoint/
 ├── requirements.txt
 └── TECHNOLOGY_STACK.md
 ```
+
 
 ## 快速安裝
 
@@ -48,6 +50,7 @@ export PATHOVISION_VLLM_BIN=/absolute/path/to/vllm
 
 YOLO 權重包需另行取得；模型路徑與進階選項請見 [`Localization_model/README.md`](Localization_model/README.md) 及 [`Student_model/README.md`](Student_model/README.md)。
 
+
 ## 部署架構
 
 ```mermaid
@@ -65,6 +68,7 @@ flowchart TB
 
 整合式 Slurm 腳本會動態分配三個連接埠、平行啟動兩個 vLLM、啟動 REST／YOLO，並把該 Job 的 node、port、ready 狀態與 API key 寫到 `.pathovision_runtime/<job-id>.env`。Client 只讀取自己 Job 的狀態檔。
 
+
 ## 啟動
 
 建議由 Windows Client 自動提交。手動提交方式如下：
@@ -77,6 +81,7 @@ sbatch --account=<wallet-id> slurm/pathovision_vlm_stack.sbatch
 
 只啟動單 GPU REST／YOLO 的參考腳本為 `slurm/pathovision_api.sbatch.example`；正式完整流程應使用三 GPU Stack。
 
+
 ## 資料與 Runtime
 
 ```text
@@ -86,6 +91,7 @@ sbatch --account=<wallet-id> slurm/pathovision_vlm_stack.sbatch
 
 兩個目錄都已排除於 Git。`.pathovision_server/` 可能包含敏感醫療資料，不得直接複製到公開 repo 或未授權位置。
 
+
 ## 測試
 
 ```bash
@@ -93,6 +99,7 @@ cd /work/<USER>/2026_NCHC_Summer_Intern_Project/server_endpoint
 .venv/bin/python -m unittest discover -v tests
 bash -n slurm/pathovision_vlm_stack.sbatch slurm/pathovision_api.sbatch.example
 ```
+
 
 ## 維運文件
 

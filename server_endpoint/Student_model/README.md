@@ -4,6 +4,7 @@
 
 模型只需要放在 NCHC 的 `server_endpoint/Student_model/`，不應複製到 Windows `client_endpoint/`。
 
+
 ## 模型與固定放置位置
 
 | 模型 key | Hugging Face 模型 | 固定目錄 | 約需空間 |
@@ -12,6 +13,7 @@
 | `mistral-small-3.1` | [mistralai/Mistral-Small-3.1-24B-Instruct-2503](https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503) | `Student_model/Mistral-Small-3.1/mistral-small-3.1-24b-instruct-2503/` | 97 GB |
 
 兩個模型合計約 160 GB；建議至少預留 180 GB。上游 `main` 分支大小可能改變。若模型頁要求接受使用條款，請先登入 Hugging Face 完成授權。
+
 
 ## 快速安裝
 
@@ -38,6 +40,7 @@ hf auth login
 ```
 
 需要固定版本時，在執行前設定 `PATHOVISION_GEMMA_REVISION` 與 `PATHOVISION_MISTRAL_REVISION`；也可用 `HF_TOKEN` 取代互動式登入。Slurm 預設離線載入，所以提交 Job 前必須完成下載與驗證。
+
 
 ## 正式目錄契約
 
@@ -68,6 +71,7 @@ best_skills/<Registry 指定的 Skill>.md
 
 FastAPI 只有在權重、控制檔與對應 vLLM `/v1/models` endpoint 都就緒時，才會回報 `inference_ready=true`。
 
+
 ## Prompt 與 Skills 更新原則
 
 - 目前 GitHub repo 不包含 SkillOpt 訓練 pipeline，只保存人工審查後的部署產物。
@@ -75,6 +79,7 @@ FastAPI 只有在權重、控制檔與對應 vLLM `/v1/models` endpoint 都就�
 - 更新前須比較差異、記錄 SHA-256，並保留非診斷性、可見證據與繁體中文輸出規則。
 - `Output_Schema.json`、`Skill_Registry.yaml`、欄位映射與 Skills 是同一份推論契約，不可只更新其中一個檔案。
 - 更新後必須執行資產驗證與完整測試。
+
 
 ## vLLM 執行環境
 

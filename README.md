@@ -7,12 +7,14 @@ PathoVision 結合 YOLO 異常區域定位、教師模型引導的技能／提�
 > [!CAUTION]
 > 本系統是研究用途的非診斷性病理影像形態輔助工具。YOLO 框選、模型文字與結構化報告都必須由合格專業人員複核，不得取代病理醫師判讀、臨床資訊整合、正式病理報告或醫療決策。
 
+
 ## 專案展示
 
 - [系統操作展示影片](https://youtu.be/VvO4idV0dgA)
 - 專案作者：呂建篁
 - 實習單位：國家實驗研究院國家高速網路與計算中心
 - 專案時間：2026/7/1 - 2026/8/31
+
 
 ## 研究動機
 
@@ -22,6 +24,7 @@ PathoVision 結合 YOLO 異常區域定位、教師模型引導的技能／提�
 2. 只針對使用者選取的 ROI 執行多模態模型分析。
 3. 以 Prompt、Skills 與 JSON Schema 約束輸出，減少格式漂移與禁止性診斷內容。
 4. 將每個模型 × 每個 ROI 的結果獨立保存，供人工複核與回溯。
+
 
 ## 研究方法
 
@@ -96,6 +99,7 @@ Mistral 的輸出格式與禁止性內容改善幅度最明顯；Gemma4 的基�
 
 </details>
 
+
 ## 系統功能
 
 - 可選擇 YOLO11s 或 YOLO11m 進行異常區域定位。
@@ -107,6 +111,7 @@ Mistral 的輸出格式與禁止性內容改善幅度最明顯；Gemma4 的基�
 - 個案紀錄支援新增、載入、欄位修改、個案編號修改與整筆刪除。
 - Server 保存原圖、定位圖、ROI、個案 metadata 與模型 × ROI 報告。
 - Client 可提交及取消 Slurm Job，並輪詢 REST、Gemma4、Mistral 的載入進度。
+
 
 ## 端點與部署架構
 
@@ -141,6 +146,7 @@ flowchart LR
 
 Client 使用互動式 OpenSSH 完成密碼與二階段驗證，並透過同一工作階段提交 Slurm。實際 REST 流量經 localhost SOCKS5h 代理送到計算節點；vLLM 只綁定計算節點的 `127.0.0.1`，不直接暴露到外部網路。
 
+
 ## 專案結構
 
 ```text
@@ -165,6 +171,7 @@ Client 使用互動式 OpenSSH 完成密碼與二階段驗證，並透過同一�
 ├── .github/workflows/ci.yml
 └── README.md
 ```
+
 
 ## 模型資產
 
@@ -192,6 +199,7 @@ YOLO11s 與 YOLO11m 另行打包為：
 ### 學生多模態模型一鍵安裝
 
 學生模型由 Hugging Face 自動下載；兩個模型約 160 GB，建議預留 180 GB。下載已整合到下方 Server 快速安裝，單模型與固定 revision 選項請見 [`server_endpoint/Student_model/README.md`](server_endpoint/Student_model/README.md)。
+
 
 ## 快速安裝
 
@@ -234,6 +242,7 @@ py -m venv .venv
 
 不使用選配 MCP 時改以 `.venv\Scripts\python app.py --no-mcp` 啟動。預設介面為 `http://127.0.0.1:8200`。
 
+
 ## 啟動與操作
 
 ### 建議方式：由 Client 自動配置
@@ -264,6 +273,7 @@ sbatch --account=<wallet-id> slurm/pathovision_vlm_stack.sbatch
 | 1 | Mistral Small 3.1 24B vLLM | 僅 `127.0.0.1` |
 | 2 | FastAPI、YOLO11s、YOLO11m | 經 SOCKS5h 由 Client 存取 |
 
+
 ## 推論與保存流程
 
 1. Client 上傳未標註的原始影像。
@@ -285,6 +295,7 @@ sbatch --account=<wallet-id> slurm/pathovision_vlm_stack.sbatch
 └── analysis.json
 ```
 
+
 ## 主要環境變數
 
 | 變數 | 預設值或用途 |
@@ -303,6 +314,7 @@ sbatch --account=<wallet-id> slurm/pathovision_vlm_stack.sbatch
 
 完整設定請參考 [`server_endpoint/.env.example`](server_endpoint/.env.example)。
 
+
 ## 測試
 
 ```bash
@@ -320,6 +332,7 @@ python -m unittest discover -v . "test_*.py"
 
 GitHub Actions 會在 push 與 pull request 時執行相同的依賴安裝、Slurm 語法檢查及兩端測試。
 
+
 ## 限制與後續方向
 
 - Teacher 與 Student 仍可能產生幻覺或未被影像支持的描述。
@@ -327,6 +340,7 @@ GitHub Actions 會在 push 與 pull request 時執行相同的依賴安裝、Slu
 - 目前評估依賴教師參考與自動指標，仍需病理專家進行外部驗證。
 - 後續可加入專家盲評、跨資料集泛化測試、校準分析與臨床流程可用性研究。
 - 系統應持續維持「可見形態描述」與「正式醫療診斷」之間的明確界線。
+
 
 ## 文件導覽
 
@@ -336,6 +350,7 @@ GitHub Actions 會在 push 與 pull request 時執行相同的依賴安裝、Slu
 - [`server_endpoint/Localization_model/README.md`](server_endpoint/Localization_model/README.md)：YOLO 權重包與 SHA-256。
 - [`server_endpoint/TECHNOLOGY_STACK.md`](server_endpoint/TECHNOLOGY_STACK.md)：技術棧。
 - [`server_endpoint/docs/PROJECT_GUIDE.md`](server_endpoint/docs/PROJECT_GUIDE.md)：維運、交接與資料治理。
+
 
 ## References
 

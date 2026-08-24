@@ -2,6 +2,7 @@
 
 此目錄保存 PathoVision Server 使用的病理影像候選異常區域定位權重。YOLO 只負責框選候選區域，不產生診斷或結構化病理報告。
 
+
 ## 必要權重
 
 | 模型 key | 檔名 | 檔案大小 | SHA-256 |
@@ -10,6 +11,7 @@
 | `yolo11m` | `yolo11m_best.pt` | 40,538,853 bytes | `349190105b061288c600eccc64ecb6276967af0191b7bd21b96147a821341c5b` |
 
 YOLO11s 偏向推論速度與資源效率；YOLO11m 在本專案測試中有較佳的 Recall、mAP 與 F1 score。
+
 
 ## 快速安裝
 
@@ -29,6 +31,7 @@ sha256sum -c Localization_model/SHA256SUMS
 ```
 
 完成後兩個 `.pt` 必須位於 `server_endpoint/Localization_model/`。若 Student VLM 也已安裝，可再執行 `python3 scripts/verify_model_assets.py --include-yolo` 驗證全部模型。
+
 
 ## 更新規則
 
