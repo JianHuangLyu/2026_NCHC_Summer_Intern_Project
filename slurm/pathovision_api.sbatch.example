@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+#SBATCH --job-name=pathovision-api
+#SBATCH --partition=dev
+#SBATCH --time=04:00:00
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=32G
+#SBATCH --gres=gpu:1
+#SBATCH --output=.pathovision_runtime/slurm-%j.out
+#SBATCH --error=.pathovision_runtime/slurm-%j.err
+
+# Normally generated and submitted automatically by client/app.py.
+# This manual example assumes it is launched from the project root.
+set -euo pipefail
+umask 077
+mkdir -p .pathovision_runtime
+PORT="$(python - <<'PY'
+import socket
+with socket.socket() as s:
+    s.bind(('0.0.0.0', 0))
+    print(s.getsockname()[1])
+PY
+)"
+export PATHOVISION_API_KEY="${PATHOVISION_API_KEY:?Set PATHOVISION_API_KEY first}"
+export PATHOVISION_MODEL_PATH="${PATHOVISION_MODEL_PATH:-$PWD/Localization_model/yolo11m_best.pt}"
+python -m uvicorn pathovision_server:app --app-dir server --host 0.0.0.0 --port "$PORT" --workers 1

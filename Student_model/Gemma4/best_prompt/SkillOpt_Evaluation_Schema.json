@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.example/2026NCHC/skillopt-evaluation.schema.json",
+  "title": "External SkillOpt Evaluation Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["Sample_ID", "Optimized_Skill", "Teacher_Output", "Student_Output", "Validation", "Scores", "Errors", "Failure_Tags"],
+  "properties": {
+    "Sample_ID": {"type": "string", "minLength": 1},
+    "Optimized_Skill": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["Skill_Name", "Current_Version", "Candidate_Version", "Scored_Output_Paths"],
+      "properties": {
+        "Skill_Name": {"type": "string", "minLength": 1},
+        "Current_Version": {"type": "string"},
+        "Candidate_Version": {"type": "string"},
+        "Scored_Output_Paths": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true}
+      }
+    },
+    "Teacher_Output": {"type": "object"},
+    "Student_Output": {"type": "object"},
+    "Validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["JSON_Parse_Success", "Schema_Valid", "Mapping_Valid", "Missing_Fields", "Unexpected_Fields", "Invalid_Status_Values"],
+      "properties": {
+        "JSON_Parse_Success": {"type": "boolean"},
+        "Schema_Valid": {"type": "boolean"},
+        "Mapping_Valid": {"type": "boolean"},
+        "Missing_Fields": {"type": "array", "items": {"type": "string"}},
+        "Unexpected_Fields": {"type": "array", "items": {"type": "string"}},
+        "Invalid_Status_Values": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "Scores": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["Schema_Validity", "Field_Value_Similarity", "Status_Accuracy", "Visible_Evidence_Consistency", "Summary_Consistency", "Prohibited_Output_Avoidance", "Total_Score"],
+      "properties": {
+        "Schema_Validity": {"$ref": "#/$defs/score"},
+        "Field_Value_Similarity": {"$ref": "#/$defs/score"},
+        "Status_Accuracy": {"$ref": "#/$defs/score"},
+        "Visible_Evidence_Consistency": {"$ref": "#/$defs/score"},
+        "Summary_Consistency": {"$ref": "#/$defs/score"},
+        "Prohibited_Output_Avoidance": {"$ref": "#/$defs/score"},
+        "Total_Score": {"$ref": "#/$defs/score"}
+      }
+    },
+    "Errors": {"type": "array", "items": {"type": "string"}},
+    "Failure_Tags": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+  },
+  "$defs": {
+    "score": {"type": "number", "minimum": 0.0, "maximum": 1.0}
+  }
+}

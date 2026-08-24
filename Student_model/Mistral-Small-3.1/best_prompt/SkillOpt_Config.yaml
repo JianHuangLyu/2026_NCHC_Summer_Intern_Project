@@ -1,0 +1,60 @@
+_base_: ../../configs/_base_/default.yaml
+
+model:
+  optimizer_backend: openai_chat
+  optimizer: gpt-5.5
+  target_backend: openai_compatible
+  target: medgemma
+  reasoning_effort: medium
+
+train:
+  num_epochs: 4
+  batch_size: 8
+  accumulation: 1
+  seed: 2026
+
+gradient:
+  analyst_workers: 4
+  minibatch_size: 4
+  merge_batch_size: 4
+  failure_only: false
+
+optimizer:
+  learning_rate: 2
+  min_learning_rate: 1
+  lr_scheduler: cosine
+  lr_control_mode: fixed
+  skill_update_mode: patch
+  use_slow_update: true
+  slow_update_samples: 8
+  use_meta_skill: true
+
+evaluation:
+  use_gate: true
+  gate_metric: soft
+  gate_mixed_weight: 0.8
+  sel_env_num: 0
+  test_env_num: 0
+  eval_test: true
+
+env:
+  name: pathology_morphology
+  skill_init: 2026NCHC_Summer_Intern/Skills/Cellular_Cytoplasmic_and_Nuclear_Morphology.md
+  target_skill_filename: Cellular_Cytoplasmic_and_Nuclear_Morphology.md
+  project_root: 2026NCHC_Summer_Intern
+  split_mode: split_dir
+  split_dir: data/pathology_morphology
+  workers: 4
+  analyst_workers: 4
+  max_completion_tokens: 12000
+  exec_timeout: 300
+  image_detail: high
+  hard_pass_threshold: 0.85
+  limit: 0
+  score_weights:
+    schema_validity: 0.10
+    field_value_similarity: 0.40
+    status_accuracy: 0.20
+    visible_evidence_consistency: 0.15
+    summary_consistency: 0.10
+    prohibited_output_avoidance: 0.05

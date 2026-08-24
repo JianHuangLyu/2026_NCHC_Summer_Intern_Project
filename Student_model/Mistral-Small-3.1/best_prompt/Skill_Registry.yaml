@@ -1,0 +1,50 @@
+version: 1.2
+root: ./2026NCHC_Summer_Intern/Skills
+
+required:
+  - Specimen_Image_and_Stain_Context.md
+  - Pathology_Image_Quality_and_Structured_Morphology_Reporting.md
+  - Tissue_Component_Recognition.md
+  - Cellular_Cytoplasmic_and_Nuclear_Morphology.md
+  - General_Tissue_Architecture_Analysis.md
+  - Extracellular_Matrix_and_Stromal_Morphology.md
+  - Vascular_Hemorrhagic_and_Circulatory_Features.md
+  - Inflammation_and_Immune_Microenvironment.md
+  - Cell_Death_Mitotic_Activity_and_Deposition_Analysis.md
+
+conditional:
+  - file: Tissue_Border_Interface_and_Growth_Pattern.md
+    activate_when: A relevant tissue border or interface is visible within the supplied image or ROI.
+  - file: Lumina_Cysts_Channels_and_Tissue_Spaces_Analysis.md
+    activate_when: A true or possible lumen, cyst, channel, intracellular space, or tissue space is visible.
+  - file: Spatial_Heterogeneity_and_Multiregion_Analysis.md
+    activate_when: WSI coverage, multiple ROIs, or more than one spatially separable region is supplied.
+  - file: Morphological_Deviation_and_Disorganization_Assessment.md
+    activate_when: Image quality is adequate and an appropriate visible reference or internally comparable tissue is available.
+  - file: Epithelial_and_Glandular_Architecture.md
+    activate_when: Epithelial, glandular, ductal, or mucosal structures are visible.
+  - file: Soft_Tissue_and_Mesenchymal_Patterns.md
+    activate_when: Mesenchymal, spindle, adipocytic-appearing, myxoid, fibrous, vascular, nerve-sheath-like, or related soft-tissue components are visible.
+  - file: Lymphoid_and_Hematopoietic_Architecture.md
+    activate_when: Lymphoid or hematopoietic tissue is visible.
+  - file: Neural_and_Glial_Tissue_Morphology.md
+    activate_when: Neural, glial, neuropil-like, or nerve structures are visible.
+  - file: Bone_Cartilage_and_Osteoid_Morphology.md
+    activate_when: Bone, cartilage, osteoid-like, or mineralized matrix is visible.
+  - file: Muscle_Tissue_Morphology.md
+    activate_when: Smooth-muscle-like or skeletal-muscle-like tissue is visible.
+  - file: Organ_Specific_Parenchymal_Morphology_Router.md
+    activate_when: Organ identity is explicitly supplied and relevant organ-specific parenchyma is visible.
+
+integration_last:
+  file: Pathology_Image_Quality_and_Structured_Morphology_Reporting.md
+
+skillopt:
+  optimization_unit: one_skill_file_at_a_time
+  fixed_control_files:
+    - Prompt.md
+    - Global_Rules.md
+    - Output_Schema.json
+    - Output_Field_Skill_Mapping.yaml
+    - Skill_Registry.yaml
+  validation_rule: candidate_score_must_be_strictly_greater_than_current_score

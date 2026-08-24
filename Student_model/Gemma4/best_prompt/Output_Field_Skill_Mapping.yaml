@@ -1,0 +1,284 @@
+version: 1.0
+output_schema: ./2026NCHC_Summer_Intern/Prompt/Output_Schema.json
+
+purpose:
+  - Define the authoritative relationship between final JSON fields and Skill outputs.
+  - Restrict integration to outputs produced by successfully loaded and applicable Skills.
+  - Define the scoring scope when SkillOpt optimizes one Skill at a time.
+
+mapping_rules:
+  primary_skill_is_accountable: true
+  source_outputs_must_exist_in_skill_output: true
+  conditional_native_outputs_are_preserved: true
+  unavailable_skill_dependent_fields: N/A
+  do_not_convert_not_evaluable_to_absent: true
+
+system_managed_fields:
+  Schema_Version:
+    source: Output_Schema.json
+  Analysis_Metadata.Analysis_Purpose:
+    source: Prompt.md
+  Analysis_Metadata.Analysis_Scope:
+    source: Prompt.md
+  Analysis_Metadata.Loaded_Skills:
+    source: runtime_loader
+  Analysis_Metadata.Conditional_Skills_Not_Performed:
+    source: runtime_loader
+  Analysis_Metadata.Unavailable_Skills:
+    source: runtime_loader
+  Findings.Conditional_Findings.Activated_Modules:
+    source: Skill_Registry.yaml
+  Findings.Conditional_Findings.Module_Findings:
+    source: successfully_loaded_conditional_skills
+
+field_mappings:
+  Analysis_Metadata.Integrated_Analysis_Status:
+    primary_skill: Pathology_Image_Quality_and_Structured_Morphology_Reporting
+    source_outputs: [Integrated_Report_Status, Module_Applicability_and_Loading_Status]
+
+  Image_Context.Image_Type:
+    primary_skill: Specimen_Image_and_Stain_Context
+    source_outputs: [Image_Level]
+  Image_Context.Stain:
+    primary_skill: Specimen_Image_and_Stain_Context
+    source_outputs: [Stain_or_Modality]
+  Image_Context.Magnification_or_MPP:
+    primary_skill: Specimen_Image_and_Stain_Context
+    source_outputs: [Scanner_and_Scale]
+  Image_Context.Organ_or_Site:
+    primary_skill: Specimen_Image_and_Stain_Context
+    source_outputs: [Organ_or_Anatomical_Site]
+
+  Image_Quality.Focus:
+    primary_skill: Pathology_Image_Quality_and_Structured_Morphology_Reporting
+    source_outputs: [Image_Quality]
+  Image_Quality.Resolution:
+    primary_skill: Pathology_Image_Quality_and_Structured_Morphology_Reporting
+    source_outputs: [Image_Quality]
+  Image_Quality.Staining_Quality:
+    primary_skill: Pathology_Image_Quality_and_Structured_Morphology_Reporting
+    source_outputs: [Image_Quality]
+  Image_Quality.Artifacts:
+    primary_skill: Pathology_Image_Quality_and_Structured_Morphology_Reporting
+    source_outputs: [Image_Quality]
+  Image_Quality.Tissue_Coverage:
+    primary_skill: Tissue_Component_Recognition
+    source_outputs: [Tissue_Coverage]
+  Image_Quality.Overall_Assessability:
+    primary_skill: Pathology_Image_Quality_and_Structured_Morphology_Reporting
+    source_outputs: [Overall_Assessability]
+  Image_Quality.Limitations:
+    primary_skill: Pathology_Image_Quality_and_Structured_Morphology_Reporting
+    source_outputs: [Image_Limitations]
+
+  Findings.Tissue_Components.Predominant_Component:
+    primary_skill: Tissue_Component_Recognition
+    source_outputs: [Predominant_Tissue_Component]
+  Findings.Tissue_Components.Additional_Components:
+    primary_skill: Tissue_Component_Recognition
+    source_outputs: [Additional_Tissue_Components, Unclassified_Tissue_Component]
+  Findings.Tissue_Components.Component_Distribution:
+    primary_skill: Tissue_Component_Recognition
+    source_outputs: [Component_Distribution, Component_Proportions]
+  Findings.Tissue_Components.Spatial_Organization:
+    primary_skill: Tissue_Component_Recognition
+    source_outputs: [Spatial_Organization, Component_Adjacency]
+
+  Findings.Cellular_Cytoplasmic_and_Nuclear_Morphology.Cell_Size:
+    primary_skill: Cellular_Cytoplasmic_and_Nuclear_Morphology
+    source_outputs: [Cell_Size]
+  Findings.Cellular_Cytoplasmic_and_Nuclear_Morphology.Cell_Shape:
+    primary_skill: Cellular_Cytoplasmic_and_Nuclear_Morphology
+    source_outputs: [Predominant_Cell_Shape, Secondary_Cell_Shapes]
+  Findings.Cellular_Cytoplasmic_and_Nuclear_Morphology.Cytoplasmic_Features:
+    primary_skill: Cellular_Cytoplasmic_and_Nuclear_Morphology
+    source_outputs: [Cytoplasmic_Amount, Cytoplasmic_Quality, Cytoplasmic_Vacuoles_or_Inclusions]
+  Findings.Cellular_Cytoplasmic_and_Nuclear_Morphology.Cell_Borders:
+    primary_skill: Cellular_Cytoplasmic_and_Nuclear_Morphology
+    source_outputs: [Cell_Borders]
+  Findings.Cellular_Cytoplasmic_and_Nuclear_Morphology.Nuclear_Size:
+    primary_skill: Cellular_Cytoplasmic_and_Nuclear_Morphology
+    source_outputs: [Nuclear_Size]
+  Findings.Cellular_Cytoplasmic_and_Nuclear_Morphology.Nuclear_Shape:
+    primary_skill: Cellular_Cytoplasmic_and_Nuclear_Morphology
+    source_outputs: [Nuclear_Shape, Nuclear_Position]
+  Findings.Cellular_Cytoplasmic_and_Nuclear_Morphology.Nuclear_Variation:
+    primary_skill: Cellular_Cytoplasmic_and_Nuclear_Morphology
+    source_outputs: [Nuclear_Size_and_Shape_Variation, Multinucleation]
+  Findings.Cellular_Cytoplasmic_and_Nuclear_Morphology.Nuclear_Contour:
+    primary_skill: Cellular_Cytoplasmic_and_Nuclear_Morphology
+    source_outputs: [Nuclear_Contour_and_Membrane, Nuclear_Grooves_Molding_or_Inclusions]
+  Findings.Cellular_Cytoplasmic_and_Nuclear_Morphology.Chromatin:
+    primary_skill: Cellular_Cytoplasmic_and_Nuclear_Morphology
+    source_outputs: [Chromatin, Nuclear_Hyperchromasia]
+  Findings.Cellular_Cytoplasmic_and_Nuclear_Morphology.Prominent_Nucleoli:
+    primary_skill: Cellular_Cytoplasmic_and_Nuclear_Morphology
+    source_outputs: [Prominent_Nucleoli]
+  Findings.Cellular_Cytoplasmic_and_Nuclear_Morphology.Nuclear_to_Cytoplasmic_Ratio:
+    primary_skill: Cellular_Cytoplasmic_and_Nuclear_Morphology
+    source_outputs: [Nuclear_to_Cytoplasmic_Ratio]
+  Findings.Cellular_Cytoplasmic_and_Nuclear_Morphology.Cellular_Cohesion:
+    primary_skill: Cellular_Cytoplasmic_and_Nuclear_Morphology
+    source_outputs: [Cellular_Cohesion]
+  Findings.Cellular_Cytoplasmic_and_Nuclear_Morphology.Population_Uniformity:
+    primary_skill: Cellular_Cytoplasmic_and_Nuclear_Morphology
+    source_outputs: [Population_Uniformity_and_Heterogeneity]
+
+  Findings.General_Tissue_Architecture.Dominant_Pattern:
+    primary_skill: General_Tissue_Architecture_Analysis
+    source_outputs: [Dominant_Architectural_Pattern]
+  Findings.General_Tissue_Architecture.Secondary_Patterns:
+    primary_skill: General_Tissue_Architecture_Analysis
+    source_outputs: [Secondary_Architectural_Patterns, Pattern_Proportions, Pattern_Distribution]
+  Findings.General_Tissue_Architecture.Cellular_Arrangement:
+    primary_skill: General_Tissue_Architecture_Analysis
+    source_outputs: [Cellular_Arrangement]
+  Findings.General_Tissue_Architecture.Cellularity_Distribution:
+    primary_skill: General_Tissue_Architecture_Analysis
+    source_outputs: [Cellularity_Distribution]
+  Findings.General_Tissue_Architecture.Structural_Complexity:
+    primary_skill: General_Tissue_Architecture_Analysis
+    source_outputs: [Structural_Fusion, Structural_Complexity]
+  Findings.General_Tissue_Architecture.Architectural_Organization:
+    primary_skill: General_Tissue_Architecture_Analysis
+    source_outputs: [Architectural_Organization, Preserved_or_Disrupted_Native_Architecture]
+
+  Findings.Extracellular_Matrix_and_Stroma.Stromal_Amount:
+    primary_skill: Extracellular_Matrix_and_Stromal_Morphology
+    source_outputs: [Matrix_or_Stromal_Amount]
+  Findings.Extracellular_Matrix_and_Stroma.Stromal_Type:
+    primary_skill: Extracellular_Matrix_and_Stromal_Morphology
+    source_outputs: [Matrix_or_Stromal_Type]
+  Findings.Extracellular_Matrix_and_Stroma.Stromal_Density:
+    primary_skill: Extracellular_Matrix_and_Stromal_Morphology
+    source_outputs: [Matrix_Density]
+  Findings.Extracellular_Matrix_and_Stroma.Stromal_Cellularity:
+    primary_skill: Extracellular_Matrix_and_Stromal_Morphology
+    source_outputs: [Stromal_Cellularity]
+  Findings.Extracellular_Matrix_and_Stroma.Matrix_Features:
+    primary_skill: Extracellular_Matrix_and_Stromal_Morphology
+    source_outputs: [Matrix_Organization, Collagen_Morphology, Fibrosis, Sclerosis, Edema, Myxoid_Change, Stromal_Cell_Morphology, Regional_Heterogeneity]
+
+  Findings.Special_Findings.Mitotic_Figures:
+    primary_skill: Cell_Death_Mitotic_Activity_and_Deposition_Analysis
+    source_outputs: [Mitotic_Figures, Approximate_Mitotic_Frequency, Mitotic_Count_Area_and_Unit, Hotspot_Status, Possible_Atypical_Mitoses]
+  Findings.Special_Findings.Necrosis_or_Cell_Death:
+    primary_skill: Cell_Death_Mitotic_Activity_and_Deposition_Analysis
+    source_outputs: [Necrosis_or_Cell_Death, Necrosis_Extent, Necrosis_Distribution, Apoptotic_or_Karyorrhectic_Debris]
+  Findings.Special_Findings.Cellular_Debris:
+    primary_skill: Cell_Death_Mitotic_Activity_and_Deposition_Analysis
+    source_outputs: [Cellular_Debris]
+  Findings.Special_Findings.Inflammation:
+    primary_skill: Inflammation_and_Immune_Microenvironment
+    source_outputs: [Inflammation_Level, Inflammatory_Pattern, Predominant_Inflammatory_Cells, Additional_Inflammatory_Cells, Lymphoid_Aggregates_or_Follicles, Granulomatous_Appearing_Aggregates, Giant_Cells, Microabscess_Like_Aggregates, Inflammation_Distribution]
+  Findings.Special_Findings.Vascular_or_Hemorrhagic_Features:
+    primary_skill: Vascular_Hemorrhagic_and_Circulatory_Features
+    source_outputs: [Vessels_or_Vascular_Like_Channels, Vessel_Density, Vessel_Caliber, Vessel_Wall_Morphology, Branching_or_Channel_Pattern, Perivascular_Arrangement, Congestion, Hemorrhage, Extravasated_Erythrocytes, Thrombus_Like_Material, Fibrin_Like_Material]
+  Findings.Special_Findings.Calcification_or_Mineralization:
+    primary_skill: Cell_Death_Mitotic_Activity_and_Deposition_Analysis
+    source_outputs: [Calcification_or_Mineralization, Calcification_Morphology]
+  Findings.Special_Findings.Other_Deposited_Material:
+    primary_skill: Cell_Death_Mitotic_Activity_and_Deposition_Analysis
+    source_outputs: [Deposited_or_Pigmented_Material, Foreign_Material, Distribution]
+
+  Morphological_Summary.Direct_Observations_Only:
+    primary_skill: Pathology_Image_Quality_and_Structured_Morphology_Reporting
+    source_outputs: [Structured_Morphological_Findings, Morphological_Summary]
+  Morphological_Summary.Uncertain_Findings:
+    primary_skill: Pathology_Image_Quality_and_Structured_Morphology_Reporting
+    source_outputs: [Uncertain_Findings, Conflicting_Findings]
+  Morphological_Summary.Not_Evaluable_Findings:
+    primary_skill: Pathology_Image_Quality_and_Structured_Morphology_Reporting
+    source_outputs: [Unavailable_Findings, Not_Evaluable_Findings]
+  Limitations.Image_Limitations:
+    primary_skill: Pathology_Image_Quality_and_Structured_Morphology_Reporting
+    source_outputs: [Image_Limitations]
+  Limitations.ROI_Limitations:
+    primary_skill: Pathology_Image_Quality_and_Structured_Morphology_Reporting
+    source_outputs: [ROI_and_Sampling_Limitations]
+  Limitations.Sampling_Limitations:
+    primary_skill: Pathology_Image_Quality_and_Structured_Morphology_Reporting
+    source_outputs: [ROI_and_Sampling_Limitations]
+  Limitations.Human_Review_Suggested:
+    primary_skill: Pathology_Image_Quality_and_Structured_Morphology_Reporting
+    source_outputs: [Expert_Review_Required]
+  Limitations.Human_Review_Reason:
+    primary_skill: Pathology_Image_Quality_and_Structured_Morphology_Reporting
+    source_outputs: [Expert_Review_Reason]
+
+conditional_module_mappings:
+  Tissue_Border_Interface_and_Growth_Pattern:
+    output_path: Findings.Conditional_Findings.Module_Findings.Tissue_Border_Interface_and_Growth_Pattern
+    source_outputs: [Border_Presence, Border_Completeness, Border_Morphology, Capsule_Like_Tissue, Interface_with_Adjacent_Tissue, Entrapment_or_Interdigitation, Visible_Structural_Relationships, ROI_Edge_Limitation, Assessability, Limitations]
+  Lumina_Cysts_Channels_and_Tissue_Spaces_Analysis:
+    output_path: Findings.Conditional_Findings.Module_Findings.Lumina_Cysts_Channels_and_Tissue_Spaces_Analysis
+    source_outputs: [Space_Presence, Space_Type, Lining_Morphology, Number, Size, Shape, Distribution, Distortion_or_Dilation, Content, Possible_Artifact, Assessability, Limitations]
+  Spatial_Heterogeneity_and_Multiregion_Analysis:
+    output_path: Findings.Conditional_Findings.Module_Findings.Spatial_Heterogeneity_and_Multiregion_Analysis
+    source_outputs: [Region_List, Region_Level_Findings, Dominant_and_Minor_Patterns, Pattern_Transitions, Feature_Hotspots, Interregion_Heterogeneity, Spatial_Relationships, Coverage_and_Sampling_Adequacy, Assessability, Limitations]
+  Morphological_Deviation_and_Disorganization_Assessment:
+    output_path: Findings.Conditional_Findings.Module_Findings.Morphological_Deviation_and_Disorganization_Assessment
+    source_outputs: [Reference_Context, Reference_Adequacy, Cellular_Morphological_Deviation, Architectural_Morphological_Deviation, Cellular_Crowding, Nuclear_Variation, Orientation_or_Polarity, Architectural_Disorganization, Supporting_Visible_Features, Assessability, Limitations]
+  Epithelial_and_Glandular_Architecture:
+    output_path: Findings.Conditional_Findings.Module_Findings.Epithelial_and_Glandular_Architecture
+    source_outputs: [Epithelial_Component, Dominant_Epithelial_Pattern, Secondary_Epithelial_Patterns, Epithelial_Layering, Polarity_and_Orientation, Bridging_Tufting_or_Budding, Glandular_or_Ductal_Organization, Luminal_Organization, Structural_Fusion_or_Complexity, Basement_Membrane_Assessability, Assessability, Limitations]
+  Soft_Tissue_and_Mesenchymal_Patterns:
+    output_path: Findings.Conditional_Findings.Module_Findings.Soft_Tissue_and_Mesenchymal_Patterns
+    source_outputs: [Mesenchymal_Component, Predominant_Cell_Morphology, Dominant_Mesenchymal_Pattern, Secondary_Patterns, Matrix_Relationship, Cellularity_and_Heterogeneity, Adipose_or_Vacuolated_Component, Vascular_Context, Entrapped_Native_Structures, Assessability, Limitations]
+  Lymphoid_and_Hematopoietic_Architecture:
+    output_path: Findings.Conditional_Findings.Module_Findings.Lymphoid_and_Hematopoietic_Architecture
+    source_outputs: [Lymphoid_or_Hematopoietic_Tissue, Architectural_Pattern, Follicle_or_Zone_Morphology, Predominant_Cell_Population_Morphology, Population_Uniformity_and_Heterogeneity, Sinus_Cord_or_Marrow_Space_Organization, Background_and_Debris, Assessability, Limitations]
+  Neural_and_Glial_Tissue_Morphology:
+    output_path: Findings.Conditional_Findings.Module_Findings.Neural_and_Glial_Tissue_Morphology
+    source_outputs: [Neural_or_Glial_Component, Background_or_Matrix, Cellular_Morphology, Architectural_Pattern, Nerve_Fascicle_or_Fiber_Organization, Rosette_Palisading_or_Perivascular_Arrangement, Microcystic_or_Vascular_Features, Assessability, Limitations]
+  Bone_Cartilage_and_Osteoid_Morphology:
+    output_path: Findings.Conditional_Findings.Module_Findings.Bone_Cartilage_and_Osteoid_Morphology
+    source_outputs: [Bone_or_Cartilage_Component, Matrix_Type, Matrix_Amount_and_Distribution, Bone_or_Cartilage_Organization, Cell_Matrix_Relationship, Rimming_Lacunae_or_Giant_Cells, Maturation_or_Zonation, Mineralization, Interface, Assessability, Limitations]
+  Muscle_Tissue_Morphology:
+    output_path: Findings.Conditional_Findings.Module_Findings.Muscle_Tissue_Morphology
+    source_outputs: [Muscle_Component, Muscle_Like_Type, Bundle_or_Fiber_Organization, Cellular_and_Nuclear_Morphology, Striations, Fiber_Size_Variation, Degenerative_or_Necrotic_Change, Fibrosis_or_Fatty_Replacement, Inflammation_Distribution, Assessability, Limitations]
+  Organ_Specific_Parenchymal_Morphology_Router:
+    output_path: Findings.Conditional_Findings.Module_Findings.Organ_Specific_Parenchymal_Morphology_Router
+    source_outputs: [Supplied_Organ_or_Site, Organ_Context_Status, Relevant_Parenchyma_Present, Selected_Organ_Module, Organ_Module_Version, Organ_Module_Loading_Status, Missing_Requirements, Effect_on_Analysis, Limitations]
+
+skillopt_scoring_scopes:
+  Specimen_Image_and_Stain_Context:
+    score_paths: [Image_Context]
+  Pathology_Image_Quality_and_Structured_Morphology_Reporting:
+    score_paths: [Analysis_Metadata.Integrated_Analysis_Status, Image_Quality, Morphological_Summary, Limitations]
+  Tissue_Component_Recognition:
+    score_paths: [Image_Quality.Tissue_Coverage, Findings.Tissue_Components]
+  Cellular_Cytoplasmic_and_Nuclear_Morphology:
+    score_paths: [Findings.Cellular_Cytoplasmic_and_Nuclear_Morphology]
+  General_Tissue_Architecture_Analysis:
+    score_paths: [Findings.General_Tissue_Architecture]
+  Extracellular_Matrix_and_Stromal_Morphology:
+    score_paths: [Findings.Extracellular_Matrix_and_Stroma]
+  Vascular_Hemorrhagic_and_Circulatory_Features:
+    score_paths: [Findings.Special_Findings.Vascular_or_Hemorrhagic_Features]
+  Inflammation_and_Immune_Microenvironment:
+    score_paths: [Findings.Special_Findings.Inflammation]
+  Cell_Death_Mitotic_Activity_and_Deposition_Analysis:
+    score_paths: [Findings.Special_Findings.Mitotic_Figures, Findings.Special_Findings.Necrosis_or_Cell_Death, Findings.Special_Findings.Cellular_Debris, Findings.Special_Findings.Calcification_or_Mineralization, Findings.Special_Findings.Other_Deposited_Material]
+  Tissue_Border_Interface_and_Growth_Pattern:
+    score_paths: [Findings.Conditional_Findings.Module_Findings.Tissue_Border_Interface_and_Growth_Pattern]
+  Lumina_Cysts_Channels_and_Tissue_Spaces_Analysis:
+    score_paths: [Findings.Conditional_Findings.Module_Findings.Lumina_Cysts_Channels_and_Tissue_Spaces_Analysis]
+  Spatial_Heterogeneity_and_Multiregion_Analysis:
+    score_paths: [Findings.Conditional_Findings.Module_Findings.Spatial_Heterogeneity_and_Multiregion_Analysis]
+  Morphological_Deviation_and_Disorganization_Assessment:
+    score_paths: [Findings.Conditional_Findings.Module_Findings.Morphological_Deviation_and_Disorganization_Assessment]
+  Epithelial_and_Glandular_Architecture:
+    score_paths: [Findings.Conditional_Findings.Module_Findings.Epithelial_and_Glandular_Architecture]
+  Soft_Tissue_and_Mesenchymal_Patterns:
+    score_paths: [Findings.Conditional_Findings.Module_Findings.Soft_Tissue_and_Mesenchymal_Patterns]
+  Lymphoid_and_Hematopoietic_Architecture:
+    score_paths: [Findings.Conditional_Findings.Module_Findings.Lymphoid_and_Hematopoietic_Architecture]
+  Neural_and_Glial_Tissue_Morphology:
+    score_paths: [Findings.Conditional_Findings.Module_Findings.Neural_and_Glial_Tissue_Morphology]
+  Bone_Cartilage_and_Osteoid_Morphology:
+    score_paths: [Findings.Conditional_Findings.Module_Findings.Bone_Cartilage_and_Osteoid_Morphology]
+  Muscle_Tissue_Morphology:
+    score_paths: [Findings.Conditional_Findings.Module_Findings.Muscle_Tissue_Morphology]
+  Organ_Specific_Parenchymal_Morphology_Router:
+    score_paths: [Findings.Conditional_Findings.Module_Findings.Organ_Specific_Parenchymal_Morphology_Router]

@@ -1,0 +1,272 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.example/2026NCHC/pathology-image-analysis-output.schema.json",
+  "title": "Non-diagnostic Pathology Image Auxiliary Analysis Output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "Schema_Version",
+    "Analysis_Metadata",
+    "Image_Context",
+    "Image_Quality",
+    "Findings",
+    "Morphological_Summary",
+    "Limitations"
+  ],
+  "properties": {
+    "Schema_Version": {
+      "const": "2.0"
+    },
+    "Analysis_Metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Analysis_Purpose",
+        "Analysis_Scope",
+        "Integrated_Analysis_Status",
+        "Loaded_Skills",
+        "Conditional_Skills_Not_Performed",
+        "Unavailable_Skills"
+      ],
+      "properties": {
+        "Analysis_Purpose": {
+          "const": "Non-diagnostic pathology image morphology assistance"
+        },
+        "Analysis_Scope": {
+          "const": "Provided image/ROI only"
+        },
+        "Integrated_Analysis_Status": {
+          "enum": ["Available", "Partially_Available", "Unavailable"]
+        },
+        "Loaded_Skills": {
+          "type": "array",
+          "items": {"type": "string"},
+          "uniqueItems": true
+        },
+        "Conditional_Skills_Not_Performed": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["Skill_Name", "Reason"],
+            "properties": {
+              "Skill_Name": {"type": "string"},
+              "Reason": {"type": "string"}
+            }
+          }
+        },
+        "Unavailable_Skills": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/unavailableSkill"}
+        }
+      }
+    },
+    "Image_Context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["Image_Type", "Stain", "Magnification_or_MPP", "Organ_or_Site"],
+      "properties": {
+        "Image_Type": {"enum": ["ROI", "Patch", "WSI", "Unknown"]},
+        "Stain": {"type": "string"},
+        "Magnification_or_MPP": {"type": ["string", "number"]},
+        "Organ_or_Site": {"type": "string"}
+      }
+    },
+    "Image_Quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["Focus", "Resolution", "Staining_Quality", "Artifacts", "Tissue_Coverage", "Overall_Assessability", "Limitations"],
+      "properties": {
+        "Focus": {"type": "string"},
+        "Resolution": {"type": "string"},
+        "Staining_Quality": {"type": "string"},
+        "Artifacts": {"$ref": "#/$defs/stringArray"},
+        "Tissue_Coverage": {"type": "string"},
+        "Overall_Assessability": {"type": "string"},
+        "Limitations": {"$ref": "#/$defs/stringArray"}
+      }
+    },
+    "Findings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["Tissue_Components", "Cellular_Cytoplasmic_and_Nuclear_Morphology", "General_Tissue_Architecture", "Extracellular_Matrix_and_Stroma", "Special_Findings", "Conditional_Findings"],
+      "properties": {
+        "Tissue_Components": {
+          "$ref": "#/$defs/tissueComponents"
+        },
+        "Cellular_Cytoplasmic_and_Nuclear_Morphology": {
+          "$ref": "#/$defs/cellularMorphology"
+        },
+        "General_Tissue_Architecture": {
+          "$ref": "#/$defs/generalArchitecture"
+        },
+        "Extracellular_Matrix_and_Stroma": {
+          "$ref": "#/$defs/stroma"
+        },
+        "Special_Findings": {
+          "$ref": "#/$defs/specialFindings"
+        },
+        "Conditional_Findings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["Activated_Modules", "Module_Findings"],
+          "properties": {
+            "Activated_Modules": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Tissue_Border_Interface_and_Growth_Pattern",
+                  "Lumina_Cysts_Channels_and_Tissue_Spaces_Analysis",
+                  "Spatial_Heterogeneity_and_Multiregion_Analysis",
+                  "Morphological_Deviation_and_Disorganization_Assessment",
+                  "Epithelial_and_Glandular_Architecture",
+                  "Soft_Tissue_and_Mesenchymal_Patterns",
+                  "Lymphoid_and_Hematopoietic_Architecture",
+                  "Neural_and_Glial_Tissue_Morphology",
+                  "Bone_Cartilage_and_Osteoid_Morphology",
+                  "Muscle_Tissue_Morphology",
+                  "Organ_Specific_Parenchymal_Morphology_Router"
+                ]
+              },
+              "uniqueItems": true
+            },
+            "Module_Findings": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "Morphological_Summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["Direct_Observations_Only", "Uncertain_Findings", "Not_Evaluable_Findings"],
+      "properties": {
+        "Direct_Observations_Only": {"type": "string"},
+        "Uncertain_Findings": {"$ref": "#/$defs/stringArray"},
+        "Not_Evaluable_Findings": {"$ref": "#/$defs/stringArray"}
+      }
+    },
+    "Limitations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["Image_Limitations", "ROI_Limitations", "Sampling_Limitations", "Human_Review_Suggested", "Human_Review_Reason"],
+      "properties": {
+        "Image_Limitations": {"$ref": "#/$defs/stringArray"},
+        "ROI_Limitations": {"$ref": "#/$defs/stringArray"},
+        "Sampling_Limitations": {"$ref": "#/$defs/stringArray"},
+        "Human_Review_Suggested": {"type": "boolean"},
+        "Human_Review_Reason": {"type": "string"}
+      }
+    }
+  },
+  "$defs": {
+    "stringArray": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "findingValue": {
+      "oneOf": [
+        {"type": "string"},
+        {"type": "number"},
+        {"type": "boolean"},
+        {"type": "array", "items": {"type": ["string", "number", "boolean"]}}
+      ]
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["Value", "Status", "Supporting_Visible_Evidence"],
+      "properties": {
+        "Value": {"$ref": "#/$defs/findingValue"},
+        "Status": {"enum": ["Present", "Absent", "N/A", "Not_Evaluable", "Indeterminate", "Unknown"]},
+        "Supporting_Visible_Evidence": {"$ref": "#/$defs/stringArray"}
+      }
+    },
+    "unavailableSkill": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["Skill_Name", "Skill_Path", "Loading_Status", "Effect_on_Analysis"],
+      "properties": {
+        "Skill_Name": {"type": "string"},
+        "Skill_Path": {"type": "string"},
+        "Loading_Status": {"const": "Unavailable"},
+        "Effect_on_Analysis": {"type": "string"}
+      }
+    },
+    "tissueComponents": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["Predominant_Component", "Additional_Components", "Component_Distribution", "Spatial_Organization"],
+      "properties": {
+        "Predominant_Component": {"$ref": "#/$defs/finding"},
+        "Additional_Components": {"$ref": "#/$defs/finding"},
+        "Component_Distribution": {"$ref": "#/$defs/finding"},
+        "Spatial_Organization": {"$ref": "#/$defs/finding"}
+      }
+    },
+    "cellularMorphology": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["Cell_Size", "Cell_Shape", "Cytoplasmic_Features", "Cell_Borders", "Nuclear_Size", "Nuclear_Shape", "Nuclear_Variation", "Nuclear_Contour", "Chromatin", "Prominent_Nucleoli", "Nuclear_to_Cytoplasmic_Ratio", "Cellular_Cohesion", "Population_Uniformity"],
+      "properties": {
+        "Cell_Size": {"$ref": "#/$defs/finding"},
+        "Cell_Shape": {"$ref": "#/$defs/finding"},
+        "Cytoplasmic_Features": {"$ref": "#/$defs/finding"},
+        "Cell_Borders": {"$ref": "#/$defs/finding"},
+        "Nuclear_Size": {"$ref": "#/$defs/finding"},
+        "Nuclear_Shape": {"$ref": "#/$defs/finding"},
+        "Nuclear_Variation": {"$ref": "#/$defs/finding"},
+        "Nuclear_Contour": {"$ref": "#/$defs/finding"},
+        "Chromatin": {"$ref": "#/$defs/finding"},
+        "Prominent_Nucleoli": {"$ref": "#/$defs/finding"},
+        "Nuclear_to_Cytoplasmic_Ratio": {"$ref": "#/$defs/finding"},
+        "Cellular_Cohesion": {"$ref": "#/$defs/finding"},
+        "Population_Uniformity": {"$ref": "#/$defs/finding"}
+      }
+    },
+    "generalArchitecture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["Dominant_Pattern", "Secondary_Patterns", "Cellular_Arrangement", "Cellularity_Distribution", "Structural_Complexity", "Architectural_Organization"],
+      "properties": {
+        "Dominant_Pattern": {"$ref": "#/$defs/finding"},
+        "Secondary_Patterns": {"$ref": "#/$defs/finding"},
+        "Cellular_Arrangement": {"$ref": "#/$defs/finding"},
+        "Cellularity_Distribution": {"$ref": "#/$defs/finding"},
+        "Structural_Complexity": {"$ref": "#/$defs/finding"},
+        "Architectural_Organization": {"$ref": "#/$defs/finding"}
+      }
+    },
+    "stroma": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["Stromal_Amount", "Stromal_Type", "Stromal_Density", "Stromal_Cellularity", "Matrix_Features"],
+      "properties": {
+        "Stromal_Amount": {"$ref": "#/$defs/finding"},
+        "Stromal_Type": {"$ref": "#/$defs/finding"},
+        "Stromal_Density": {"$ref": "#/$defs/finding"},
+        "Stromal_Cellularity": {"$ref": "#/$defs/finding"},
+        "Matrix_Features": {"$ref": "#/$defs/finding"}
+      }
+    },
+    "specialFindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["Mitotic_Figures", "Necrosis_or_Cell_Death", "Cellular_Debris", "Inflammation", "Vascular_or_Hemorrhagic_Features", "Calcification_or_Mineralization", "Other_Deposited_Material"],
+      "properties": {
+        "Mitotic_Figures": {"$ref": "#/$defs/finding"},
+        "Necrosis_or_Cell_Death": {"$ref": "#/$defs/finding"},
+        "Cellular_Debris": {"$ref": "#/$defs/finding"},
+        "Inflammation": {"$ref": "#/$defs/finding"},
+        "Vascular_or_Hemorrhagic_Features": {"$ref": "#/$defs/finding"},
+        "Calcification_or_Mineralization": {"$ref": "#/$defs/finding"},
+        "Other_Deposited_Material": {"$ref": "#/$defs/finding"}
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "algorithm": "sha256",
+  "purpose": "Baseline hashes of the user-supplied Skills before any SkillOpt optimization.",
+  "files": {
+    "Bone_Cartilage_and_Osteoid_Morphology.md": "61002aefe7f0060d9b655d48899e0850cc2d98291d1eb3c5607f6745e5a431f9",
+    "Cell_Death_Mitotic_Activity_and_Deposition_Analysis.md": "2c3af612996d76a4286b08b31aa127e9f046061d71b6ecd35a987f82dc87dae3",
+    "Cellular_Cytoplasmic_and_Nuclear_Morphology.md": "08b98e1d2e8853465d20a885056ab70ec9331fc311aa709659dabb29df926fca",
+    "Epithelial_and_Glandular_Architecture.md": "929976c9584dbdcc37f0b60d0df12a5c0ee8b3e21df92216b6eb960b02d3f571",
+    "Extracellular_Matrix_and_Stromal_Morphology.md": "1dbba2d04a41ab22e45c0637f8178e626646f99b6f4347310d782bbb82e820cf",
+    "General_Tissue_Architecture_Analysis.md": "0b580b11b0b309346787c4ae7dcc78505bbe67a325f6e42b689c3940edb726f5",
+    "Inflammation_and_Immune_Microenvironment.md": "dccf633b3d3e8465a49200cf9394aad3d97f32e0a032450ed5a48127e1f64237",
+    "Lumina_Cysts_Channels_and_Tissue_Spaces_Analysis.md": "4ef31691fb24c505112893f6e4003efaf6ef19414cab82265d5fb9bb26f07769",
+    "Lymphoid_and_Hematopoietic_Architecture.md": "3e1315bd2fcade9a1f6b1a8618482e238caf1135320a6a6fc8286c7afa2ccbce",
+    "Morphological_Deviation_and_Disorganization_Assessment.md": "0b70b29473a10a534d052ed1da2d2d3f15e64df2fcc48f320309d47dd53ef2ba",
+    "Muscle_Tissue_Morphology.md": "ae42f5b02dc57978c874618657314fded2300d09dc2e233484867ce30b730f7c",
+    "Neural_and_Glial_Tissue_Morphology.md": "4478a29549646f454a5b57a71d69a791b29d90a489254cfdc6b0f33b6ced8656",
+    "Organ_Specific_Parenchymal_Morphology_Router.md": "ac1869a334a184f98022e3e40d39e134dfeb4fbede9c94315ee61cbaf3b065d7",
+    "Pathology_Image_Quality_and_Structured_Morphology_Reporting.md": "b77512515ddc5819325e8aac033ee70318c3d29327302034ec9d95332f69cfb5",
+    "Soft_Tissue_and_Mesenchymal_Patterns.md": "91b1038b9019bc2e3418907701ccab62d98f9ac01ef85e71c0ed7edc05bca7b2",
+    "Spatial_Heterogeneity_and_Multiregion_Analysis.md": "6480ee5b8821cb54c4e971f42e098f070b49b25cb11acfe01a932e684566f7de",
+    "Specimen_Image_and_Stain_Context.md": "836bed1170f8bce66f85a69ca0c0b89018598ba4b8788aa2d9e94ba187ed3e10",
+    "Tissue_Border_Interface_and_Growth_Pattern.md": "9ebbc8e9658d6946e30b54c785a2b77ddb71750f20770881a45ac33ab7833ee1",
+    "Tissue_Component_Recognition.md": "f1fa7a306051d8afd6fbe03d6259bb2de73b6ad6d1ae99f92e5bb6ce99e7eac7",
+    "Vascular_Hemorrhagic_and_Circulatory_Features.md": "37c4e5fc3ecdc541215023998b037af04288657d30494005964ed8f51f9d4f1b"
+  }
+}

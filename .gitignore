@@ -1,0 +1,39 @@
+# Rebuildable Python/runtime state
+.venv/
+.hf-model-installer/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+
+# PathoVision runtime and case artifacts
+.pathovision_runtime/
+.pathovision_server/
+*.log
+
+# Large model payloads; keep directory READMEs and Prompt/Skill controls
+Localization_model/*.pt
+Student_model/Gemma4/gemma-4-31B-it/
+Student_model/Mistral-Small-3.1/mistral-small-3.1-24b-instruct-2503/
+Student_model/**/.cache/
+Student_model/**/*.safetensors
+Student_model/**/pytorch_model*.bin
+Student_model/**/consolidated.safetensors
+
+# Local release archives
+*.zip
+*.tar
+*.tar.gz
+
+# Local editor/OS artifacts
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
