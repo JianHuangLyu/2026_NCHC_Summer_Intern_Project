@@ -1,4 +1,4 @@
-# 病理影像異常區域定位與結構化分析系統(Structured Pathology Image Analysis via YOLO-Based Abnormality Detection and Teacher-Guided Student Skill Optimization)
+# 病理影像異常區域定位與結構化分析系統
 
 
 2026 國家高速網路與計算中心暑期實習專案
