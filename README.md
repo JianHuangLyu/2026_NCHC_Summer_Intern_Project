@@ -358,7 +358,7 @@ GitHub Actions 會在 push 與 pull request 時執行相同的依賴安裝、Slu
 - [`server_endpoint/README.md`](server_endpoint/README.md)：NCHC Server 端獨立部署。
 - [`server_endpoint/Student_model/README.md`](server_endpoint/Student_model/README.md)：學生模型下載、放置與驗證。
 - [`server_endpoint/Localization_model/README.md`](server_endpoint/Localization_model/README.md)：YOLO 權重包與 SHA-256。
-- [`server_endpoint/TECHNOLOGY_STACK.md`](server_endpoint/TECHNOLOGY_STACK.md)：技術棧與元件責任。
+- [`server_endpoint/TECHNOLOGY_STACK.md`](server_endpoint/TECHNOLOGY_STACK.md)：技術棧。
 - [`server_endpoint/docs/PROJECT_GUIDE.md`](server_endpoint/docs/PROJECT_GUIDE.md)：維運、交接與資料治理。
 
 ## References
