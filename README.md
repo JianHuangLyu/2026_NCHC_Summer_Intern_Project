@@ -27,17 +27,7 @@ PathoVision 結合 YOLO 異常區域定位、教師模型引導的技能／提�
 
 ## 研究方法
 
-```mermaid
-flowchart LR
-    A[RefPath 病理影像與區域描述] --> B[YOLO 系列模型訓練與比較]
-    B --> C[候選異常區域定位]
-    C --> D[使用者選擇 ROI]
-    D --> E[教師模型產生參考結構]
-    E --> F[SkillOpt 最佳化 Prompt 與 Skills]
-    F --> G[凍結權重的學生多模態模型]
-    G --> H[JSON Schema 驗證]
-    H --> I[逐 ROI 結構化報告]
-```
+![研究方法架構圖](server_endpoint/docs/assets/Model.png)
 
 ### 一、RefPath 資料整理
 
