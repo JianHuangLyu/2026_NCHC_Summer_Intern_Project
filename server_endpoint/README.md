@@ -48,7 +48,7 @@ python3 scripts/verify_model_assets.py --include-yolo
 export PATHOVISION_VLLM_BIN=/absolute/path/to/vllm
 ```
 
-YOLO 權重包需另行取得；模型路徑與進階選項請見 [`Localization_model/README.md`](Localization_model/README.md) 及 [`Student_model/README.md`](Student_model/README.md)。
+YOLO 權重包可從 [Google Drive 下載](https://drive.google.com/file/d/14_QVjcctgqczYHWX9Ed3NhP7TnuASK_o/view?usp=sharing)；模型路徑與進階選項請見 [`Localization_model/README.md`](Localization_model/README.md) 及 [`Student_model/README.md`](Student_model/README.md)。
 
 
 ## 部署架構

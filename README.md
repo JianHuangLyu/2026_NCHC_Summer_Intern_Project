@@ -194,7 +194,7 @@ YOLO11s 與 YOLO11m 另行打包為：
 7731db12b1c3fcdb39fe036772e0b69ab851ce8c80570626da85c5d42737a000
 ```
 
-權重包不在 GitHub 中，請向專案維護者取得。個別權重雜湊與驗證方式請見 [`server_endpoint/Localization_model/README.md`](server_endpoint/Localization_model/README.md)。
+權重包不在 GitHub 中，可從 [Google Drive 下載 YOLO 權重包](https://drive.google.com/file/d/14_QVjcctgqczYHWX9Ed3NhP7TnuASK_o/view?usp=sharing)。個別權重雜湊與驗證方式請見 [`server_endpoint/Localization_model/README.md`](server_endpoint/Localization_model/README.md)。
 
 ### 學生多模態模型一鍵安裝
 

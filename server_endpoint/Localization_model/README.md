@@ -15,7 +15,7 @@ YOLO11s 偏向推論速度與資源效率；YOLO11m 在本專案測試中有較�
 
 ## 快速安裝
 
-權重包 `2026_NCHC_Summer_Intern_Project_YOLO_weights.zip` 不在公開 repo，請向專案維護者取得。壓縮包 SHA-256：
+權重包 `2026_NCHC_Summer_Intern_Project_YOLO_weights.zip` 不在公開 repo，請從 [Google Drive 下載](https://drive.google.com/file/d/14_QVjcctgqczYHWX9Ed3NhP7TnuASK_o/view?usp=sharing)。壓縮包 SHA-256：
 
 ```text
 7731db12b1c3fcdb39fe036772e0b69ab851ce8c80570626da85c5d42737a000
