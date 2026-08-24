@@ -327,22 +327,6 @@ sbatch --account=<wallet-id> slurm/pathovision_vlm_stack.sbatch
 
 完整設定請參考 [`server_endpoint/.env.example`](server_endpoint/.env.example)。
 
-## REST API 摘要
-
-| 方法 | 路徑 | 功能 |
-|---|---|---|
-| `GET` | `/healthz` | Server 與 YOLO 基本狀態 |
-| `GET` | `/api/v1/model` | YOLO／學生模型清單與就緒狀態 |
-| `GET` | `/api/v1/student-models` | Prompt、Skills 與 vLLM endpoint 狀態 |
-| `POST` | `/api/v1/analyses` | 執行 YOLO 定位並建立個案 |
-| `POST` | `/api/v1/analyses/{case_id}/student-analysis` | 分析指定 ROI |
-| `GET` | `/api/v1/analyses` | 取得個案清單 |
-| `GET` | `/api/v1/analyses/{case_id}` | 載入完整個案 |
-| `PATCH` | `/api/v1/analyses/{case_id}` | 修改個案欄位與編號 |
-| `DELETE` | `/api/v1/analyses/{case_id}` | 刪除個案及 Server artifacts |
-
-受保護 API 必須帶入 `X-API-Key`。
-
 ## 測試
 
 ```bash
