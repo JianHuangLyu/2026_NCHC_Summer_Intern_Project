@@ -19,13 +19,13 @@ htmlcov/
 *.log
 
 # Large model payloads; keep directory READMEs and Prompt/Skill controls
-Localization_model/*.pt
-Student_model/Gemma4/gemma-4-31B-it/
-Student_model/Mistral-Small-3.1/mistral-small-3.1-24b-instruct-2503/
-Student_model/**/.cache/
-Student_model/**/*.safetensors
-Student_model/**/pytorch_model*.bin
-Student_model/**/consolidated.safetensors
+server_endpoint/Localization_model/*.pt
+server_endpoint/Student_model/Gemma4/gemma-4-31B-it/
+server_endpoint/Student_model/Mistral-Small-3.1/mistral-small-3.1-24b-instruct-2503/
+server_endpoint/Student_model/**/.cache/
+server_endpoint/Student_model/**/*.safetensors
+server_endpoint/Student_model/**/pytorch_model*.bin
+server_endpoint/Student_model/**/consolidated.safetensors
 
 # Local release archives
 *.zip

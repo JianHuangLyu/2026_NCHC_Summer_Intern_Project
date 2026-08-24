@@ -13,7 +13,7 @@ from unittest.mock import Mock, patch
 from PIL import Image
 from starlette.datastructures import Headers
 
-SERVER_DIR = Path(__file__).resolve().parents[1] / "server"
+SERVER_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SERVER_DIR))
 import pathovision_server
 import student_vlm

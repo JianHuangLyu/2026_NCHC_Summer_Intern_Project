@@ -15,11 +15,12 @@ jobs:
           python-version: "3.11"
           cache: pip
       - name: Install dependencies
-        run: python -m pip install -r requirements.txt -r client/requirements.txt
+        run: python -m pip install -r server_endpoint/requirements.txt -r client_endpoint/requirements.txt
       - name: Check Slurm script syntax
-        run: bash -n slurm/pathovision_vlm_stack.sbatch slurm/pathovision_api.sbatch.example
+        run: bash -n server_endpoint/slurm/pathovision_vlm_stack.sbatch server_endpoint/slurm/pathovision_api.sbatch.example
       - name: Run server and integration tests
         run: python -m unittest discover -v tests
+        working-directory: server_endpoint
       - name: Run client tests
-        working-directory: client
+        working-directory: client_endpoint
         run: python -m unittest discover -v . "test_*.py"

@@ -1,265 +1,312 @@
-# 2026 NCHC Summer Intern Project — PathoVision
+# PathoVision：病理影像異常區域定位與結構化分析系統
 
-## GitHub 交付內容與首次安裝
+2026 國家高速網路與計算中心暑期實習專案
 
-此資料夾是可直接建立 GitHub repo 的純原始碼版本。為避免超過 GitHub 限制及誤散布模型，以下內容不在 repo 內：
+PathoVision 結合 YOLO 異常區域定位、教師模型引導的技能／提示詞最佳化，以及學生多模態模型的結構化推論。系統先在病理影像中找出候選異常區域，再由使用者選擇真正要分析的 ROI，最後以固定 JSON Schema 產生逐區域、可追溯且可保存的形態學報告。
 
-- YOLO11s／YOLO11m 的 .pt 權重：另附 2026_NCHC_Summer_Intern_Project_YOLO_weights.zip。
-- Gemma4／Mistral Student VLM 權重：由 Hugging Face 自動下載。
-- .venv、案例影像、報告、Slurm runtime 與 log：在部署端產生。
+專案採用兩端點交付：Windows 使用者端放在 `client_endpoint/`；NCHC NANO4 的 API、模型、Slurm 與個案資料全部集中在 `server_endpoint/`。大型模型與醫療影像不需要離開伺服器。
 
-首次部署至 NCHC Server：
+> [!CAUTION]
+> 本系統是研究用途的非診斷性病理影像形態輔助工具。YOLO 框選、模型文字與結構化報告都必須由合格專業人員複核，不得取代病理醫師判讀、臨床資訊整合、正式病理報告或醫療決策。
 
-~~~bash
-git clone <GITHUB_REPO_URL> 2026_NCHC_Summer_Intern_Project
-cd 2026_NCHC_Summer_Intern_Project
+## 專案展示
 
-# 將另附的 YOLO 壓縮包解到 repo 根目錄
-unzip ../2026_NCHC_Summer_Intern_Project_YOLO_weights.zip -d .
+- [系統操作展示影片](https://youtu.be/VvO4idV0dgA)
+- 專案作者：呂建篁
+- 實習單位：國家高速網路與計算中心／大數據服務平台組
+- 專案時間：2026 年暑期
 
-# 安裝 Server 依賴
-python3 -m venv .venv
-.venv/bin/python -m pip install --upgrade pip
-.venv/bin/python -m pip install -r requirements.txt
+## 研究動機
 
-# 下載及驗證兩個 Student VLM
-./scripts/install_student_vlm.sh
+病理影像的異常區域定位與文字分析是影像解讀的重要基礎，但逐張檢視、人工框選與撰寫報告相當耗時，且自由文字不容易進行後續比較、統計與系統整合。本專案希望建立一條可重現的兩階段流程：
 
-# 同時驗證 Student VLM 與 YOLO 權重
-python3 scripts/verify_model_assets.py --include-yolo
-~~~
+1. 以 YOLO 快速定位候選異常區域。
+2. 只針對使用者選取的 ROI 執行多模態模型分析。
+3. 以 Prompt、Skills 與 JSON Schema 約束輸出，減少格式漂移與禁止性診斷內容。
+4. 將每個模型 × 每個 ROI 的結果獨立保存，供人工複核與回溯。
 
-Student VLM 的登入、單模型下載、固定 revision、磁碟需求與手動安裝方式請見 [Student_model/README.md](Student_model/README.md)。YOLO 壓縮包內容與 SHA-256 請見 [Localization_model/README.md](Localization_model/README.md)。
-
-病理醫療影像異常定位之結構化分析輔助系統。
-
-PathoVision 採 Client–Server 架構：使用者在 Windows localhost 操作 Gradio Client，透過原生 OpenSSH 與 SOCKS5h Tunnel 連線至 NCHC NANO4。影像、模型權重、GPU 推論與個案資料皆保留在 Server；Client 負責操作與結果呈現。
-
-> 本系統為非診斷性病理影像形態輔助工具，不得取代病理專業判讀、臨床資訊整合或正式醫療診斷。
-
-## 主要功能
-
-- 可選擇 `YOLO11s` 或 `YOLO11m` 進行異常區域定位。
-- 未偵測到異常區域時，不啟動結構化分析模型。
-- 同一影像可選擇多個異常區域，且只分析使用者勾選的 ROI。
-- 每個 ROI 皆由 Gemma4 或 Mistral Small 3.1 獨立產生結構化報告；同模型最多兩個 ROI 平行推論。
-- 結構化推論強制載入所選模型目錄中的 `best_prompt`、`best_skills`、欄位 Skill 對應與 JSON Schema。
-- 報告以病理與醫學專業繁體中文呈現，保留必要中英對照。
-- 報告頁提供彼此獨立的「分析推論模型」與「異常區域」下拉選單；同一個案可保存多個模型 × 多個 ROI 的報告。
-- 「03 個案紀錄」支援新增、右鍵載入、欄位名稱／欄位值修改、個案編號修改及整筆刪除。
-- Slurm 資源配置完成即進入分析頁，REST、Mistral、Gemma4 載入狀態每兩秒更新。
-
-## 系統架構
+## 研究方法
 
 ```mermaid
 flowchart LR
-    A[Windows localhost\nGradio Client] -->|OpenSSH + SOCKS5h| B[FastAPI REST Server\nNCHC NANO4]
-    B --> C[GPU 0\nGemma4 31B / vLLM]
-    B --> D[GPU 1\nMistral Small 3.1 24B / vLLM]
-    B --> E[GPU 2\nYOLO11s / YOLO11m]
-    B --> F[(HFS\nCase JSON + PNG + ROI reports)]
-    G[Slurm] --> B
-    G --> C
-    G --> D
-    G --> E
+    A[RefPath 病理影像與區域描述] --> B[YOLO 系列模型訓練與比較]
+    B --> C[候選異常區域定位]
+    C --> D[使用者選擇 ROI]
+    D --> E[教師模型產生參考結構]
+    E --> F[SkillOpt 最佳化 Prompt 與 Skills]
+    F --> G[凍結權重的學生多模態模型]
+    G --> H[JSON Schema 驗證]
+    H --> I[逐 ROI 結構化報告]
 ```
 
-完整技術說明請見 [TECHNOLOGY_STACK.md](TECHNOLOGY_STACK.md)。
-專案目錄、部署、runtime 與訓練產物交接方式請見 [docs/PROJECT_GUIDE.md](docs/PROJECT_GUIDE.md)。
+### 一、RefPath 資料整理
 
-## 推論流程
+研究以 RefPath 病理視覺定位資料為基礎。原始資料提供病理影像、自然語言區域描述及 bounding box；本專案再整理成 YOLO 訓練與評估所需記錄。簡報所列的專案處理後切分如下：
 
-1. Client 上傳未標註的原始影像。
-2. Server 使用選定的 YOLO 模型定位候選異常區域並保存個案。
-3. 使用者在原始影像預覽中勾選一個或多個 ROI。
-4. 若未選取 ROI 或 YOLO 無偵測結果，流程在此停止，不呼叫分析推論模型。
-5. Server 由保存的原始影像裁切所選 ROI；每個 ROI 分別送入當次所選的結構化模型。可再選另一模型分析相同 ROI，既有報告不會被覆蓋。
-6. 每次分析推論均套用該模型的最佳 Prompt、Skill Registry、best skills 與 Output Schema。
-7. 每份輸出獨立進行 JSON Schema 驗證並保存；部分區域失敗不會覆蓋其他成功報告。
-8. Client 在「02 結構化視覺報告」分別選擇報告模型與異常區域；兩個選單互相獨立，異常區域選單只列出該模型已完成的報告。
+| 切分 | 記錄數 | 比例 |
+|---|---:|---:|
+| 訓練集 | 106,076 | 79.70% |
+| 驗證集 | 13,556 | 10.19% |
+| 測試集 | 13,464 | 10.12% |
+| 合計 | 133,096 | 100% |
 
-預設單次最多選擇 4 個 ROI；同一模型最多同時處理 2 個請求，其餘自動接續。
+涵蓋內容包括肺癌、乳癌、腎癌與淋巴結轉移相關病理影像。上述數量是本專案經資料展開與整理後的訓練記錄數，不等同於 RefPath 官方公布的原始影像數或框選數。
+
+### 二、YOLO 異常區域定位
+
+在一致的資料與實驗設定下比較 9 個 YOLO 變體，並以 Precision、Recall、mAP 與 F1 score 評估：
+
+| 模型 | 參數量（M） | Precision | Recall | mAP50 | mAP50–95 | F1 score |
+|---|---:|---:|---:|---:|---:|---:|
+| YOLOv8n | 0.31 | 68.6% | 77.6% | 77.8% | 63.8% | 0.728 |
+| YOLOv8s | 11.2 | 66.7% | 78.0% | 73.7% | 61.2% | 0.727 |
+| YOLOv8m | 25.9 | 74.0% | 79.6% | 81.8% | 68.8% | 0.767 |
+| YOLO11n | 2.6 | 74.9% | 79.5% | 84.4% | 68.8% | 0.771 |
+| **YOLO11s** | **9.5** | **77.2%** | 80.3% | 86.5% | 71.8% | 0.787 |
+| **YOLO11m** | **20.1** | 76.8% | **81.7%** | **86.6%** | **72.6%** | **0.792** |
+| YOLO26n | 2.4 | 74.9% | 78.4% | 83.9% | 68.2% | 0.766 |
+| YOLO26s | 9.5 | 76.0% | 79.8% | 85.2% | 70.1% | 0.779 |
+| YOLO26m | 20.4 | 72.1% | 77.4% | 80.5% | 64.8% | 0.746 |
+
+YOLO11m 在 Recall、mAP50、mAP50–95 與 F1 score 表現最佳；YOLO11s 具有最高 Precision，且以較少參數維持接近 YOLO11m 的效能。因此部署端保留兩種選擇：YOLO11s 偏向速度與資源效率，YOLO11m 偏向整體定位效果。
+
+### 三、教師引導的學生模型技能最佳化
+
+研究階段以醫療專用的 MedGemma 1.5 作為教師模型，提供結構化輸出參考；再以通用多模態學生模型 Mistral Small 3.1 與 Gemma4 進行比較。最佳化時不更新學生模型權重，而是把 Prompt 與 Skills 視為可訓練的外部文字參數，透過 SkillOpt 反覆評分與更新。
+
+教師模型只參與離線研究與最佳化，不是線上部署的必要服務。部署端使用經審查的 `best_prompt/`、`best_skills/` 與凍結的學生模型權重。
+
+Soft Score 綜合評估以下面向：
+
+- JSON Schema 合法性。
+- 欄位值與教師參考的 Token F1 相似度。
+- 狀態欄位正確性。
+- 描述與可見影像證據的一致性。
+- 摘要一致性。
+- 禁止性輸出避免能力，例如不應直接輸出診斷或惡性判定。
+
+#### SkillOpt 實驗結果
+
+| 學生模型 | 最佳化對象 | Soft Score | Schema 合法率 | 禁止性輸出案例數 |
+|---|---|---:|---:|---:|
+| Mistral Small 3.1 | Skills | 0.0543 → 0.2685 | 10.22% → 83.33% | 12,088 → 2,245 |
+| Mistral Small 3.1 | Prompt | 0.0190 → 0.1942 | 10.83% → 99.29% | 12,006 → 95 |
+| Gemma4 | Skills | 0.4272 → 0.4300 | 95.68% → 95.94% | 581 → 546 |
+| Gemma4 | Prompt | 0.1670 → 0.1691 | 95.35% → 97.34% | 626 → 358 |
+
+Mistral 的輸出格式與禁止性內容改善幅度最明顯；Gemma4 的基線 Schema 合法率已高，因此增益較小。欄位內容相似度並非所有設定都同步上升，顯示「格式更正確」不等於「內容一定更接近教師」，仍需要病理專業人工驗證。
+
+<details>
+<summary>查看欄位內容相似度完整結果</summary>
+
+| 學生模型 | 最佳化對象 | 最佳化前 | 最佳化後 | 變化 |
+|---|---|---:|---:|---:|
+| Mistral Small 3.1 | Skills | 20.38% | 18.43% | -1.95 個百分點 |
+| Mistral Small 3.1 | Prompt | 19.50% | 27.09% | +7.59 個百分點 |
+| Gemma4 | Skills | 33.76% | 33.98% | +0.22 個百分點 |
+| Gemma4 | Prompt | 25.14% | 25.09% | -0.05 個百分點 |
+
+</details>
+
+## 系統功能
+
+- 可選擇 YOLO11s 或 YOLO11m 進行異常區域定位。
+- YOLO 無偵測結果時不啟動學生模型，避免無目標推論。
+- 同一影像可勾選多個 ROI，且只分析被選取的區域。
+- Gemma4 與 Mistral Small 3.1 可分別分析相同 ROI，報告互不覆蓋。
+- 每份輸出套用模型專屬 Prompt、Skill Registry、Skills 與 JSON Schema。
+- 報告頁可獨立切換模型與 ROI，結果以病理專業繁體中文呈現。
+- 個案紀錄支援新增、載入、欄位修改、個案編號修改與整筆刪除。
+- Server 保存原圖、定位圖、ROI、個案 metadata 與模型 × ROI 報告。
+- Client 可提交及取消 Slurm Job，並輪詢 REST、Gemma4、Mistral 的載入進度。
+
+## 端點與部署架構
+
+```mermaid
+flowchart LR
+    subgraph W[Windows 本機]
+        U[瀏覽器] --> C[client_endpoint\nGradio 使用者端]
+        C --> S[Windows OpenSSH\n密碼與二階段驗證]
+    end
+
+    S --> L[NANO4 登入節點]
+    L -->|提交與管理工作| Q[Slurm]
+    C -->|SOCKS5h 加密通道| A[FastAPI REST\nserver_endpoint]
+
+    subgraph N[NANO4 計算節點]
+        Q --> G0[GPU 0\nGemma4 31B／vLLM]
+        Q --> G1[GPU 1\nMistral Small 3.1 24B／vLLM]
+        Q --> G2[GPU 2\nFastAPI／YOLO11s／YOLO11m]
+        A --> G0
+        A --> G1
+        A --> G2
+        A --> H[(HFS\n影像、ROI、JSON 報告)]
+    end
+```
+
+### 部署邊界
+
+| 端點 | 放置位置 | 內容 | 不應放置的內容 |
+|---|---|---|---|
+| `client_endpoint/` | Windows localhost | Gradio UI、REST Client、OpenSSH／SOCKS5h、Slurm 管理 | 模型權重、病理影像、Server 個案資料 |
+| `server_endpoint/` | NCHC NANO4 的 `/work/<USER>/...` | FastAPI、YOLO、學生模型、vLLM 啟動、Slurm、個案資料 | SSH 密碼、OTP、提交至 Git 的 token |
+
+Client 使用互動式 OpenSSH 完成密碼與二階段驗證，並透過同一工作階段提交 Slurm。實際 REST 流量經 localhost SOCKS5h 代理送到計算節點；vLLM 只綁定計算節點的 `127.0.0.1`，不直接暴露到外部網路。
 
 ## 專案結構
 
 ```text
 2026_NCHC_Summer_Intern_Project/
-├── Localization_model/          # YOLO 異常定位權重
-│   ├── yolo11s_best.pt
-│   └── yolo11m_best.pt
-├── Student_model/               # 結構化分析推論模型、best prompt 與 best skills
-│   ├── Gemma4/
-│   └── Mistral-Small-3.1/
-├── server/                      # FastAPI、YOLO、ROI 與分析推論模型整合
-├── slurm/                       # NANO4 三 GPU 啟動腳本
-├── client/                      # Windows localhost Gradio Client
-├── tests/                       # 後端、Schema 與整合測試
-├── scripts/                     # 輔助工具
-├── docs/                        # 專案整理、部署與訓練產物交接
-├── .pathovision_server/         # Server 個案資料（執行時產生）
-├── .pathovision_runtime/        # Slurm 狀態與 Log（執行時產生）
-├── requirements.txt
-└── TECHNOLOGY_STACK.md
+├── client_endpoint/                 # 可獨立放到 Windows 的使用者端
+│   ├── app.py
+│   ├── api_client.py
+│   ├── nchc_remote.py
+│   ├── mcp_server.py
+│   └── requirements.txt
+├── server_endpoint/                 # 可獨立部署到 NCHC 的伺服器端
+│   ├── pathovision_server.py        # FastAPI、YOLO、個案與報告 API
+│   ├── student_vlm.py               # ROI、Prompt／Skill 與 vLLM 整合
+│   ├── Localization_model/          # YOLO 說明與另行交付的權重
+│   ├── Student_model/               # 學生模型控制檔與下載位置
+│   ├── slurm/                       # 一張 Job 啟動三 GPU 服務
+│   ├── scripts/                     # 模型安裝、驗證與 API key 工具
+│   ├── tests/                       # Server、Schema、ROI 與持久化測試
+│   ├── docs/                        # 維運與交接文件
+│   ├── requirements.txt
+│   └── TECHNOLOGY_STACK.md
+├── .github/workflows/ci.yml
+└── README.md
 ```
 
-## 環境需求
+## 模型資產
 
-### NCHC NANO4 Server
+GitHub repo 不包含大型模型權重、個案影像、報告或執行環境。
 
-- Linux、Slurm 與可用的 NANO4 計算節點。
-- 建議 3 張 NVIDIA H200 GPU：Gemma、Mistral、YOLO／FastAPI 各使用一張。
-- 專案 `.venv` 目前使用 Python 3.9；vLLM 使用 `PATHOVISION_VLLM_BIN` 指定的獨立 Runtime。
-- `Localization_model/` 與 `Student_model/` 必須保留在 Server，不需複製至 localhost。
-- Gemma 與 Mistral 權重、Prompt、Skill 與 Schema 必須完整存在。
+### YOLO 權重
 
-### Windows localhost Client
+YOLO11s 與 YOLO11m 另行打包為：
 
-- Windows 10/11。
-- Python 3.9 以上。
-- Windows 原生 `ssh.exe`。
-- 可連線至 NANO4 公開登入節點，並能完成密碼與 2FA 驗證。
+```text
+2026_NCHC_Summer_Intern_Project_YOLO_weights.zip
+└── Localization_model/
+    ├── yolo11s_best.pt
+    └── yolo11m_best.pt
+```
+
+壓縮包 SHA-256：
+
+```text
+7731db12b1c3fcdb39fe036772e0b69ab851ce8c80570626da85c5d42737a000
+```
+
+權重包不在 GitHub 中，請向專案維護者取得。個別權重雜湊與驗證方式請見 [`server_endpoint/Localization_model/README.md`](server_endpoint/Localization_model/README.md)。
+
+### 學生多模態模型一鍵安裝
+
+學生模型權重由 Hugging Face 下載，Prompt、Skills 與 Schema 已包含在 repo。兩個模型合計約 160 GB，建議至少預留 180 GB。
+
+```bash
+cd /work/<USER>/2026_NCHC_Summer_Intern_Project/server_endpoint
+
+# 模型需要授權時先登入 Hugging Face
+python3 -m pip install --user --upgrade huggingface_hub
+hf auth login
+
+# 自動下載 Gemma4 與 Mistral，完成後自動驗證
+./scripts/install_student_vlm.sh
+
+# 同時驗證學生模型與另行放置的 YOLO 權重
+python3 scripts/verify_model_assets.py --include-yolo
+```
+
+單模型下載、固定 Hugging Face revision、斷點續傳、手動安裝及完整目錄契約請見 [`server_endpoint/Student_model/README.md`](server_endpoint/Student_model/README.md)。
 
 ## 安裝
 
-### 1. Server Python 環境
+### 一、NCHC Server
 
 ```bash
-cd /work/<USER>/2026_NCHC_Summer_Intern_Project
-python -m venv .venv
+git clone https://github.com/ChienHaungLu/2026_NCHC_Summer_Intern_Project.git
+cd 2026_NCHC_Summer_Intern_Project/server_endpoint
+
+# 將另行取得、放在 repo 根目錄的 YOLO 壓縮包解到 Server 端點
+unzip ../2026_NCHC_Summer_Intern_Project_YOLO_weights.zip -d .
+sha256sum -c Localization_model/SHA256SUMS
+
+# 建立 FastAPI／YOLO 執行環境
+python3 -m venv .venv
 .venv/bin/python -m pip install --upgrade pip
 .venv/bin/python -m pip install -r requirements.txt
+
+# 下載學生模型
+./scripts/install_student_vlm.sh
 ```
 
-若已存在 `.venv`，不需重新建立。直接執行專案指令不會自動啟用虛擬環境；Slurm 腳本會直接呼叫 `.venv/bin/python`。互動式操作可使用：
-
-```bash
-source .venv/bin/activate
-```
-
-vLLM 可使用獨立環境，並以環境變數指定：
+vLLM 建議使用獨立環境，避免與 FastAPI／YOLO 的 CUDA、PyTorch 依賴互相影響：
 
 ```bash
 export PATHOVISION_VLLM_BIN=/absolute/path/to/vllm
 ```
 
-### 2. Windows Client 環境
+### 二、Windows Client
 
-將 `client/` 放在使用者 localhost 後執行：
+將 `client_endpoint/` 複製到 Windows，或在 Windows clone 整個 repo 後執行：
 
 ```powershell
-cd client
+cd client_endpoint
 py -m venv .venv
 .venv\Scripts\python -m pip install --upgrade pip
 .venv\Scripts\python -m pip install -r requirements.txt
 .venv\Scripts\python app.py
 ```
 
-不需要 MCP 時可執行：
+不使用選配 MCP façade 時：
 
 ```powershell
 .venv\Scripts\python app.py --no-mcp
 ```
 
-預設 UI：`http://127.0.0.1:8200`
+預設介面位址為 `http://127.0.0.1:8200`。
 
-## 啟動方式
+## 啟動與操作
 
-### 建議：由 Windows Client 自動配置
+### 建議方式：由 Client 自動配置
 
-1. 開啟 Client。
-2. 確認畫面上的 NANO4 主機與 SSH Port（兩欄固定不可修改），輸入帳號、密碼與 2FA。
-3. 選擇 `/work/<USER>/2026_NCHC_Summer_Intern_Project`。
-4. 提交 Slurm Job。
-5. Job 進入 `RUNNING` 後，Client 立即顯示分析頁。
-6. 模型尚未完成時，可在分析頁查看 REST、Mistral、Gemma4 載入進度。
+1. 在 Windows 啟動 `client_endpoint/app.py`。
+2. 輸入 NANO4 帳號、密碼並完成二階段驗證。
+3. 選擇 `/work/<USER>/2026_NCHC_Summer_Intern_Project/server_endpoint`。
+4. 選擇 Slurm partition、account 與資源後提交工作。
+5. Job 進入 `RUNNING` 後即可進入分析頁；模型載入狀態會每兩秒更新。
+6. 上傳原始影像並選擇 YOLO11s 或 YOLO11m。
+7. 勾選要分析的 ROI，再選擇 Gemma4 或 Mistral Small 3.1。
+8. 到結構化報告頁查看模型 × ROI 報告，或在個案紀錄頁管理資料。
+9. 正常關閉 Client 或按下結束工作階段，歸還 Slurm 資源。
 
-Client 正常關閉或按下「結束工作階段並歸還資源」時，會取消由該 Client 提交的 Slurm Job。
-
-### 手動提交整合式 Stack
+### 手動提交三 GPU Stack
 
 ```bash
-cd /work/<USER>/2026_NCHC_Summer_Intern_Project
+cd /work/<USER>/2026_NCHC_Summer_Intern_Project/server_endpoint
+export PATHOVISION_VLLM_BIN=/absolute/path/to/vllm
 sbatch --account=<wallet-id> slurm/pathovision_vlm_stack.sbatch
 ```
 
-整合腳本會：
+預設資源分配：
 
-- 啟動 Gemma4 vLLM。
-- 啟動 Mistral Small 3.1 vLLM。
-- 啟動 FastAPI／YOLO Server。
-- 建立 `.pathovision_runtime/<job-id>.env`，供 Client 建立 Tunnel。
+| GPU | 服務 | 網路可見性 |
+|---:|---|---|
+| 0 | Gemma4 31B vLLM | 僅 `127.0.0.1` |
+| 1 | Mistral Small 3.1 24B vLLM | 僅 `127.0.0.1` |
+| 2 | FastAPI、YOLO11s、YOLO11m | 經 SOCKS5h 由 Client 存取 |
 
-## 模型與 Prompt／Skill 配置
+## 推論與保存流程
 
-### 異常定位模型
-
-| Key | 權重路徑 | UI 定位 |
-|---|---|---|
-| `yolo11s` | `Localization_model/yolo11s_best.pt` | 推論快且較準確 |
-| `yolo11m` | `Localization_model/yolo11m_best.pt` | 推論稍慢且最準確 |
-
-可用 `PATHOVISION_MODEL_PATH` 覆寫預設 YOLO11m 權重；YOLO11s 預設從同一 `Localization_model/` 目錄載入。
-
-### 結構化分析模型
-
-| Key | 模型 | UI 定位 | 必要控制檔 |
-|---|---|---|---|
-| `mistral-small-3.1` | Mistral Small 3.1 24B | 推論較快，理解與推理次佳 | `best_prompt/`、`best_skills/` |
-| `gemma4` | Gemma4 31B | 推論較慢，理解與推理最佳 | `best_prompt/`、`best_skills/` |
-
-每個可用模型至少必須包含：
-
-```text
-best_prompt/Prompt.md
-best_prompt/Global_Rules.md
-best_prompt/Output_Schema.json
-best_prompt/Output_Field_Skill_Mapping.yaml
-best_prompt/Skill_Registry.yaml
-best_skills/*.md
-```
-
-缺少權重、Prompt、Registry、Schema 或 Registry 指定 Skill 時，該模型不會標示為 `inference_ready`。
-
-## 重要環境變數
-
-| 變數 | 預設值／用途 |
-|---|---|
-| `PATHOVISION_MODEL_PATH` | `Localization_model/yolo11m_best.pt` |
-| `PATHOVISION_STUDENT_MODEL_ROOT` | `Student_model/` |
-| `PATHOVISION_CASE_ROOT` | `.pathovision_server/cases` |
-| `PATHOVISION_API_KEY` | REST `X-API-Key`；自動模式會產生 |
-| `PATHOVISION_VLLM_BIN` | vLLM 執行檔絕對路徑 |
-| `PATHOVISION_MAX_VLM_ROIS` | 單次最多 ROI，預設 4 |
-| `PATHOVISION_VLM_MAX_CONCURRENT_PER_MODEL` | 每模型同時推論數，預設 2 |
-| `PATHOVISION_VLLM_MAX_NUM_SEQS` | vLLM 動態批次上限，預設 2 |
-| `PATHOVISION_VLM_MAX_MODEL_LEN` | vLLM Context 上限，預設 49152 |
-| `PATHOVISION_VLLM_SKIP_MM_PROFILING` | 預設 1，加速多模態冷啟動 |
-| `PATHOVISION_YOLO_HALF` | GPU YOLO FP16，預設 1 |
-| `PATHOVISION_PRELOAD_LOCALIZATION_MODELS` | 背景預載 YOLO，預設 1 |
-
-## REST API 摘要
-
-| Method | Endpoint | 功能 |
-|---|---|---|
-| `GET` | `/healthz` | REST 與 YOLO 基本狀態 |
-| `GET` | `/api/v1/model` | YOLO／Student 模型清單與就緒狀態 |
-| `GET` | `/api/v1/student-models` | 結構化模型資源與端點狀態 |
-| `POST` | `/api/v1/analyses` | YOLO-only 定位並建立個案 |
-| `POST` | `/api/v1/analyses/{case_id}/student-analysis` | 分析指定 ROI；每區域獨立報告 |
-| `GET` | `/api/v1/analyses` | 取得 Server 個案清單 |
-| `GET` | `/api/v1/analyses/{case_id}` | 載入完整個案 |
-| `POST` | `/api/v1/cases` | 新增空白個案 |
-| `PATCH` | `/api/v1/analyses/{case_id}` | 修改欄位與個案編號 |
-| `PATCH` | `/api/v1/analyses/{case_id}/structured-analysis` | 相容／管理用途：修改指定模型與 ROI 的結構化報告；目前 UI 不提供報告編輯 |
-| `DELETE` | `/api/v1/analyses/{case_id}` | 刪除個案及其 Server artifacts |
-
-受保護 API 需提供：
-
-```http
-X-API-Key: <PATHOVISION_API_KEY>
-```
-
-## 個案儲存格式
+1. Client 上傳未標註的原始影像。
+2. Server 用指定 YOLO 定位候選區域並建立個案。
+3. 使用者勾選一個或多個 ROI；沒有偵測或沒有勾選時流程停止。
+4. Server 從保存的乾淨原圖裁切 ROI，不使用畫過框的預覽圖。
+5. 每個 ROI 獨立送入所選學生模型，同模型預設最多兩個請求並行。
+6. 推論套用模型專屬 Prompt、Skill Registry、Skills 與 JSON Schema。
+7. 每個模型 × ROI 的輸出獨立驗證與保存，單區域失敗不會覆蓋其他成功報告。
 
 ```text
 .pathovision_server/cases/PV-.../
@@ -267,45 +314,91 @@ X-API-Key: <PATHOVISION_API_KEY>
 ├── localized.png
 ├── roi_001.png
 ├── roi_002.png
-├── student_vlm_analysis.json    # 舊 Client 相容：第一份成功報告
 ├── student_vlm_gemma4_region_001.json
 ├── student_vlm_mistral-small-3.1_region_001.json
-├── student_vlm_gemma4_region_002.json
-└── analysis.json                # 個案 metadata、偵測與全部報告狀態
+└── analysis.json
 ```
 
-新格式以 `student_vlm_<model-key>_region_<detection-index>.json` 保存模型 × ROI 報告；Server 仍可讀取舊版未含 model key 的檔名。
+## 主要環境變數
+
+| 變數 | 預設值或用途 |
+|---|---|
+| `PATHOVISION_PROJECT_DIR` | `server_endpoint/` 的絕對路徑 |
+| `PATHOVISION_SERVER_PYTHON` | Server `.venv/bin/python` |
+| `PATHOVISION_VLLM_BIN` | vLLM 執行檔絕對路徑，Slurm 必填 |
+| `PATHOVISION_MODEL_PATH` | `Localization_model/yolo11m_best.pt` |
+| `PATHOVISION_STUDENT_MODEL_ROOT` | `Student_model/` |
+| `PATHOVISION_CASE_ROOT` | `.pathovision_server/cases` |
+| `PATHOVISION_API_KEY` | REST 的 `X-API-Key`；自動模式會隨機產生 |
+| `PATHOVISION_MAX_VLM_ROIS` | 單次最多 ROI，預設 4 |
+| `PATHOVISION_VLM_MAX_CONCURRENT_PER_MODEL` | 每模型並行請求數，預設 2 |
+| `PATHOVISION_VLLM_MAX_MODEL_LEN` | vLLM context 上限，預設 49,152 |
+| `PATHOVISION_YOLO_HALF` | GPU YOLO 使用 FP16，預設 1 |
+
+完整設定請參考 [`server_endpoint/.env.example`](server_endpoint/.env.example)。
+
+## REST API 摘要
+
+| 方法 | 路徑 | 功能 |
+|---|---|---|
+| `GET` | `/healthz` | Server 與 YOLO 基本狀態 |
+| `GET` | `/api/v1/model` | YOLO／學生模型清單與就緒狀態 |
+| `GET` | `/api/v1/student-models` | Prompt、Skills 與 vLLM endpoint 狀態 |
+| `POST` | `/api/v1/analyses` | 執行 YOLO 定位並建立個案 |
+| `POST` | `/api/v1/analyses/{case_id}/student-analysis` | 分析指定 ROI |
+| `GET` | `/api/v1/analyses` | 取得個案清單 |
+| `GET` | `/api/v1/analyses/{case_id}` | 載入完整個案 |
+| `PATCH` | `/api/v1/analyses/{case_id}` | 修改個案欄位與編號 |
+| `DELETE` | `/api/v1/analyses/{case_id}` | 刪除個案及 Server artifacts |
+
+受保護 API 必須帶入 `X-API-Key`。
 
 ## 測試
 
 ```bash
-cd /work/<USER>/2026_NCHC_Summer_Intern_Project
-
-# Server、Schema、ROI 與資料持久化測試
+# Server、Schema、ROI 與資料持久化
+cd server_endpoint
 .venv/bin/python -m unittest discover -v tests
 
-# Windows Client 與 Slurm 管理邏輯測試
-cd client
-python -m unittest discover -v . "test_*.py"
+# Slurm 語法
+bash -n slurm/pathovision_vlm_stack.sbatch slurm/pathovision_api.sbatch.example
 
-# Slurm 腳本語法
-cd ..
-bash -n slurm/pathovision_vlm_stack.sbatch
+# Client 邏輯
+cd ../client_endpoint
+python -m unittest discover -v . "test_*.py"
 ```
 
-## 故障排除
+GitHub Actions 會在 push 與 pull request 時執行相同的依賴安裝、Slurm 語法檢查及兩端測試。
 
-- **定位模型不存在**：確認 `Localization_model/yolo11s_best.pt` 與 `Localization_model/yolo11m_best.pt`。
-- **結構化模型未出現在清單**：檢查權重、`best_prompt`、`best_skills` 及 vLLM `/v1/models`。
-- **Client 已進入分析頁但按鈕尚未啟用**：查看頁面內模型服務準備進度，模型就緒後會自動啟用。
-- **無異常區域報告**：YOLO 無偵測或使用者未勾選 ROI 時，系統依設計不呼叫分析推論模型。
-- **右鍵個案選單未出現**：重新整理 localhost Client，將游標移至資料列後按右鍵。
-- **Slurm 啟動失敗**：查看 `.pathovision_runtime/slurm-<job-id>.err` 及模型 vLLM Log。
+## 安全與資料治理
 
-## 安全與資料邊界
-
-- 密碼與 2FA 只寫入互動式 OpenSSH 終端，不放入命令列。
+- SSH 密碼與 OTP 只送入互動式 OpenSSH 終端，不放入命令列或專案檔案。
 - REST API 使用隨機 `X-API-Key`。
-- Runtime 狀態檔權限為 `0600`，runtime 目錄為 `0700`。
-- 原始影像、ROI、模型與個案報告不需離開 NANO4。
-- 所有模型輸出都會先通過 JSON Schema 驗證；目前報告頁為唯讀，避免在 UI 中意外改動模型原始輸出。
+- vLLM endpoint 只監聽計算節點 `127.0.0.1`。
+- runtime 狀態檔權限為 `0600`，runtime 目錄權限為 `0700`。
+- 原始影像、ROI、模型與個案報告都保留在 NANO4。
+- `.env`、Hugging Face token、模型權重、個案影像與 runtime 不得提交至 Git。
+- `.pathovision_server/` 可能包含敏感醫療資料；備份、傳輸與刪除須遵守所屬單位的資料治理規範。
+
+## 限制與後續方向
+
+- Teacher 與 Student 仍可能產生幻覺或未被影像支持的描述。
+- Schema 合法只能證明格式正確，不能證明內容具臨床正確性。
+- 目前評估依賴教師參考與自動指標，仍需病理專家進行外部驗證。
+- 後續可加入專家盲評、跨資料集泛化測試、校準分析與臨床流程可用性研究。
+- 系統應持續維持「可見形態描述」與「正式醫療診斷」之間的明確界線。
+
+## 文件導覽
+
+- [`client_endpoint/README.md`](client_endpoint/README.md)：Windows 使用者端安裝與操作。
+- [`server_endpoint/README.md`](server_endpoint/README.md)：NCHC Server 端獨立部署。
+- [`server_endpoint/Student_model/README.md`](server_endpoint/Student_model/README.md)：學生模型下載、放置與驗證。
+- [`server_endpoint/Localization_model/README.md`](server_endpoint/Localization_model/README.md)：YOLO 權重包與 SHA-256。
+- [`server_endpoint/TECHNOLOGY_STACK.md`](server_endpoint/TECHNOLOGY_STACK.md)：技術棧與元件責任。
+- [`server_endpoint/docs/PROJECT_GUIDE.md`](server_endpoint/docs/PROJECT_GUIDE.md)：維運、交接與資料治理。
+
+## 參考資料
+
+1. Zhong, C. 等人，[PathVG: A New Benchmark and Dataset for Pathology Visual Grounding](https://arxiv.org/abs/2502.20869)，RefPath 資料集與病理視覺定位基準。
+2. Yang, Y. 等人，[SkillOpt: Executive Strategy for Self-Evolving Agent Skills](https://arxiv.org/abs/2605.23904)，以凍結模型及可最佳化文字技能進行外部參數學習。
+3. Sellergren, A. 等人，[MedGemma 1.5 Technical Report](https://arxiv.org/abs/2604.05081)，醫療多模態教師模型相關技術報告。

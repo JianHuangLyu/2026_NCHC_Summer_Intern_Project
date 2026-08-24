@@ -39,7 +39,7 @@ from student_vlm import (
 )
 
 APP_DIR = Path(__file__).resolve().parent
-PROJECT_DIR = APP_DIR.parent
+PROJECT_DIR = APP_DIR
 MODEL_PATH = Path(
     os.environ.get("PATHOVISION_MODEL_PATH", str(PROJECT_DIR / "Localization_model" / "yolo11m_best.pt"))
 ).expanduser().resolve()

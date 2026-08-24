@@ -426,7 +426,7 @@ def ssh_login_and_discover(
         f"找到 **{len(project_choices)}** 個 REST Server 專案。"
     )
     if not project_choices:
-        status += "\n請先將本套件放到 `$HOME` 或 `/work/$USER`，且保留 `server/pathovision_server.py`。"
+        status += "\n請先將 `server_endpoint/` 放到 `$HOME` 或 `/work/$USER`，且保留 `pathovision_server.py`。"
     return (
         session.token,
         gr.update(choices=project_choices, value=project_choices[0] if project_choices else None),

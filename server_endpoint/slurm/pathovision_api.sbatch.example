@@ -8,8 +8,8 @@
 #SBATCH --output=.pathovision_runtime/slurm-%j.out
 #SBATCH --error=.pathovision_runtime/slurm-%j.err
 
-# Normally generated and submitted automatically by client/app.py.
-# This manual example assumes it is launched from the project root.
+# Normally generated and submitted automatically by client_endpoint/app.py.
+# This manual example assumes it is launched from server_endpoint/.
 set -euo pipefail
 umask 077
 mkdir -p .pathovision_runtime
@@ -22,4 +22,4 @@ PY
 )"
 export PATHOVISION_API_KEY="${PATHOVISION_API_KEY:?Set PATHOVISION_API_KEY first}"
 export PATHOVISION_MODEL_PATH="${PATHOVISION_MODEL_PATH:-$PWD/Localization_model/yolo11m_best.pt}"
-python -m uvicorn pathovision_server:app --app-dir server --host 0.0.0.0 --port "$PORT" --workers 1
+python -m uvicorn pathovision_server:app --app-dir . --host 0.0.0.0 --port "$PORT" --workers 1

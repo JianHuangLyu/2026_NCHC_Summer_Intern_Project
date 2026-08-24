@@ -119,8 +119,8 @@ Gradio Client ── Windows OpenSSH / SOCKS5h ──► NANO4 Compute Node Fast
 
 Python 套件版本以以下檔案為準：
 
-- Server（兩份保持同步）：[requirements.txt](requirements.txt)、[server/requirements.txt](server/requirements.txt)
-- Windows Client：[client/requirements.txt](client/requirements.txt)
+- Server：[requirements.txt](requirements.txt)
+- Windows Client：[client_endpoint/requirements.txt](../client_endpoint/requirements.txt)
 - vLLM：由 `PATHOVISION_VLLM_BIN` 指向的 NANO4 Runtime 決定。
 
 ## 醫療使用邊界

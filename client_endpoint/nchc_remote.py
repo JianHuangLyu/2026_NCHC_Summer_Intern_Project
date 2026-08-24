@@ -33,7 +33,7 @@ NCHC_2FA_METHODS = {
     "2｜Mobile APP Push（推播核准）": "2",
     "3｜Email OTP（電子郵件驗證碼）": "3",
 }
-PROJECT_MARKER = "server/pathovision_server.py"
+PROJECT_MARKER = "pathovision_server.py"
 ANSI_ESCAPE_RE = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
 RUNTIME_POLL_SECONDS = 2.0
 SCHEDULER_POLL_SECONDS = 10.0
@@ -411,11 +411,13 @@ def discover_projects(ssh: RemoteSSH) -> list[str]:
 set -eu
 for project in \
   "${PATHOVISION_PROJECT_DIR:-}" \
-  "$HOME/2026_NCHC_Summer_Intern_Project" \
-  "/work/$USER/2026_NCHC_Summer_Intern_Project"
+  "$HOME/2026_NCHC_Summer_Intern_Project/server_endpoint" \
+  "/work/$USER/2026_NCHC_Summer_Intern_Project/server_endpoint" \
+  "$HOME/server_endpoint" \
+  "/work/$USER/server_endpoint"
 do
   [ -n "$project" ] || continue
-  if [ -f "$project/server/pathovision_server.py" ]; then
+  if [ -f "$project/pathovision_server.py" ]; then
     printf '%s\n' "$project"
   fi
 done

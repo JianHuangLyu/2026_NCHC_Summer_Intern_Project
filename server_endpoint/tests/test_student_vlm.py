@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 from PIL import Image
 
-SERVER_DIR = Path(__file__).resolve().parents[1] / "server"
+SERVER_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SERVER_DIR))
 import student_vlm
 

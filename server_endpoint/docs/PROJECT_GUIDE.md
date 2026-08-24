@@ -1,6 +1,6 @@
 # PathoVision 系統整合專案指南
 
-本文件是 /work/<USER>/2026_NCHC_Summer_Intern_Project 的維運與交接入口。此專案負責 Windows Client、NANO4 Slurm 工作、FastAPI、YOLO 定位、分析推論模型服務，以及個案／報告持久化。
+本文件是 `/work/<USER>/2026_NCHC_Summer_Intern_Project/server_endpoint` 的維運與交接入口。此端點負責 NANO4 Slurm 工作、FastAPI、YOLO 定位、分析推論模型服務，以及個案／報告持久化。
 
 訓練與評估 pipeline 由維護者另行管理，不包含在本 GitHub repo。兩者的關係是「訓練與評估產物 → 人工審查 → 系統整合部署」，不應讓系統執行時直接修改訓練輸出。
 
@@ -10,9 +10,9 @@
 
 | 文件 | 用途 |
 |---|---|
-| [根目錄 README](../README.md) | 安裝、啟動、API、操作與故障排除 |
+| [根目錄 README](../../README.md) | 安裝、啟動、API、操作與故障排除 |
 | [技術棧](../TECHNOLOGY_STACK.md) | 技術棧、元件責任與資料流 |
-| [Windows Client](../client/README.md) | Windows localhost Client 操作 |
+| [Windows Client](../../client_endpoint/README.md) | Windows localhost Client 操作 |
 | [YOLO 模型說明](../Localization_model/README.md) | YOLO 權重名稱、來源與驗證 |
 | [分析模型說明](../Student_model/README.md) | 分析模型、Prompt／Skill 目錄契約 |
 
@@ -20,8 +20,8 @@
 
 | 類型 | 目錄 | 是否屬於原始碼／交付物 | 說明 |
 |---|---|---:|---|
-| Server 原始碼 | server/ | 是 | FastAPI、YOLO、ROI、分析推論、Schema 與個案儲存 |
-| Windows Client | client/ | 是 | Gradio UI、OpenSSH／2FA、SOCKS、Slurm 與 REST Client |
+| Server 原始碼 | `pathovision_server.py`、`student_vlm.py` | 是 | FastAPI、YOLO、ROI、分析推論、Schema 與個案儲存 |
+| Windows Client | `../client_endpoint/` | 是，獨立端點 | Gradio UI、OpenSSH／2FA、SOCKS、Slurm 與 REST Client |
 | HPC 啟動 | slurm/ | 是 | 三 GPU 整合式 Stack |
 | 測試／工具 | tests/、scripts/ | 是 | 回歸測試與輔助檢查 |
 | 定位模型 | Localization_model/ | 目錄與說明是；權重另行管理 | YOLO11s／YOLO11m .pt |
@@ -49,8 +49,8 @@
 
 | 環境 | 依賴來源 | 備註 |
 |---|---|---|
-| FastAPI／YOLO Server | requirements.txt、server/requirements.txt | 兩份目前應保持完全一致 |
-| Windows Client | client/requirements.txt | 含 Gradio、Requests/SOCKS、Windows pywinpty；MCP 僅 Python 3.10+ 安裝 |
+| FastAPI／YOLO Server | `requirements.txt` | Server 唯一依賴清單 |
+| Windows Client | `../client_endpoint/requirements.txt` | 含 Gradio、Requests/SOCKS、Windows pywinpty；MCP 僅 Python 3.10+ 安裝 |
 | vLLM | PATHOVISION_VLLM_BIN 指向的獨立 NANO4 runtime | 不列入 Server requirements，避免 CUDA／PyTorch 依賴衝突 |
 
 ## 報告識別與持久化
@@ -111,20 +111,17 @@ SkillOpt 實驗不更新 Gemma／Mistral 權重。可部署產物是 Prompt／Sk
 ## 驗證指令
 
 ~~~bash
-cd /work/<USER>/2026_NCHC_Summer_Intern_Project
-
-# Server 依賴清單必須同步
-diff -u requirements.txt server/requirements.txt
+cd /work/<USER>/2026_NCHC_Summer_Intern_Project/server_endpoint
 
 # Server／Schema／ROI／持久化
 .venv/bin/python -m unittest discover -v tests
 
 # Windows Client 邏輯（Windows venv 中執行較完整）
-cd client
+cd ../client_endpoint
 python -m unittest discover -v . "test_*.py"
 
 # Slurm 語法
-cd ..
+cd ../server_endpoint
 bash -n slurm/pathovision_vlm_stack.sbatch
 
 # 部署權重／控制檔雜湊

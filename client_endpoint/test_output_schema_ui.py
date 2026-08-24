@@ -5,7 +5,7 @@ import types
 import unittest
 from pathlib import Path
 
-CLIENT_DIR = Path(__file__).resolve().parents[1] / "client"
+CLIENT_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(CLIENT_DIR))
 fake_gradio = types.ModuleType("gradio")
 

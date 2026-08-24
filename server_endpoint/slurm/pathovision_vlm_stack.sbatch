@@ -213,7 +213,7 @@ unset PATHOVISION_PHI35_BASE_URL || true
 
 write_state 0 "STARTING_REST_API"
 CUDA_VISIBLE_DEVICES=2 "$SERVER_PYTHON" -m uvicorn pathovision_server:app \
-  --app-dir "$PROJECT_DIR/server" \
+  --app-dir "$PROJECT_DIR" \
   --host 0.0.0.0 \
   --port "$API_PORT" \
   --workers 1 >"$RUNTIME_DIR/server-${JOB_ID}.log" 2>&1 &

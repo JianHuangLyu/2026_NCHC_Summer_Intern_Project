@@ -80,7 +80,7 @@ class RuntimeWaitTests(unittest.TestCase):
 
     def test_generated_job_requests_three_gpu_stack(self) -> None:
         script = nchc_remote.build_sbatch(
-            "/work/user/2026_NCHC_Summer_Intern_Project",
+            "/work/user/2026_NCHC_Summer_Intern_Project/server_endpoint",
             "secret",
             "8gpus",
             "",
@@ -91,6 +91,8 @@ class RuntimeWaitTests(unittest.TestCase):
         )
         self.assertIn("#SBATCH --gres=gpu:3", script)
         self.assertIn('export PATHOVISION_DEFAULT_STUDENT_MODEL=""', script)
+        self.assertIn("PROJECT_DIR=/work/user/2026_NCHC_Summer_Intern_Project/server_endpoint", script)
+        self.assertIn('STACK_SCRIPT="$PROJECT_DIR/slurm/pathovision_vlm_stack.sbatch"', script)
 
     def test_invalid_ready_port_is_rejected(self) -> None:
         session = SimpleNamespace(node="", server_port=0)
