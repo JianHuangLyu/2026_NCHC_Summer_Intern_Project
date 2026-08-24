@@ -344,16 +344,6 @@ python -m unittest discover -v . "test_*.py"
 
 GitHub Actions 會在 push 與 pull request 時執行相同的依賴安裝、Slurm 語法檢查及兩端測試。
 
-## 安全與資料治理
-
-- SSH 密碼與 OTP 只送入互動式 OpenSSH 終端，不放入命令列或專案檔案。
-- REST API 使用隨機 `X-API-Key`。
-- vLLM endpoint 只監聽計算節點 `127.0.0.1`。
-- runtime 狀態檔權限為 `0600`，runtime 目錄權限為 `0700`。
-- 原始影像、ROI、模型與個案報告都保留在 NANO4。
-- `.env`、Hugging Face token、模型權重、個案影像與 runtime 不得提交至 Git。
-- `.pathovision_server/` 可能包含敏感醫療資料；備份、傳輸與刪除須遵守所屬單位的資料治理規範。
-
 ## 限制與後續方向
 
 - Teacher 與 Student 仍可能產生幻覺或未被影像支持的描述。
