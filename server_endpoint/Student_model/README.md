@@ -13,87 +13,31 @@
 
 兩個模型合計約 160 GB；建議至少預留 180 GB。上游 `main` 分支大小可能改變。若模型頁要求接受使用條款，請先登入 Hugging Face 完成授權。
 
-## 自動安裝
+## 快速安裝
 
-需求：Linux、Bash、Python 3.9 以上，以及可連線 Hugging Face 的節點。
-
-腳本會執行以下工作：
-
-1. 在 `server_endpoint/.hf-model-installer/` 建立獨立環境。
-2. 安裝或更新 `huggingface_hub`。
-3. 將模型快照下載到程式固定使用的目錄。
-4. 支援 Hugging Face 的續傳機制；中斷後可直接重跑。
-5. 驗證模型設定、權重分片、Prompt、Schema 與 Skills。
+需求：Linux、Bash、Python 3.9 以上，且可連線 Hugging Face。
 
 ```bash
 cd /work/<USER>/2026_NCHC_Summer_Intern_Project/server_endpoint
-
-# 模型需要授權時先登入；憑證不會寫入 repo
 python3 -m pip install --user --upgrade huggingface_hub
 hf auth login
-
-# 下載兩個模型
 ./scripts/install_student_vlm.sh
+```
 
-# 或只下載指定模型
+腳本會下載兩個模型到固定位置並自動驗證；下載中斷時直接重跑。
+
+常用選項：
+
+```bash
+# 只安裝一個模型
 ./scripts/install_student_vlm.sh --model gemma4
 ./scripts/install_student_vlm.sh --model mistral-small-3.1
-```
 
-也可使用環境變數登入：
-
-```bash
-export HF_TOKEN=<你的存取權杖>
-./scripts/install_student_vlm.sh
-```
-
-不要將 token 寫入 `.env.example`、腳本、README、Shell 歷史範例或 Git commit。
-
-## 固定上游版本
-
-預設下載各模型的 `main`。正式部署若要求可重現，建議指定經審查的 commit revision：
-
-```bash
-export PATHOVISION_GEMMA_REVISION=<gemma-commit>
-export PATHOVISION_MISTRAL_REVISION=<mistral-commit>
-./scripts/install_student_vlm.sh
-```
-
-## 手動下載
-
-使用 Hugging Face 官方 `hf` CLI 時，`--local-dir` 必須完全符合下列路徑：
-
-```bash
-cd /work/<USER>/2026_NCHC_Summer_Intern_Project/server_endpoint
-
-hf download google/gemma-4-31B-it \
-  --local-dir Student_model/Gemma4/gemma-4-31B-it
-
-hf download mistralai/Mistral-Small-3.1-24B-Instruct-2503 \
-  --local-dir Student_model/Mistral-Small-3.1/mistral-small-3.1-24b-instruct-2503
-```
-
-下載後執行驗證：
-
-```bash
+# 只驗證，不下載
 ./scripts/install_student_vlm.sh --verify-only
 ```
 
-## 僅驗證既有模型
-
-```bash
-# 驗證兩個模型、分片索引、Prompt、Schema 與 Skills
-./scripts/install_student_vlm.sh --verify-only
-
-# 只驗證單一模型
-./scripts/install_student_vlm.sh --verify-only --model gemma4
-./scripts/install_student_vlm.sh --verify-only --model mistral-small-3.1
-
-# 同時驗證 YOLO 權重
-python3 scripts/verify_model_assets.py --include-yolo
-```
-
-Slurm 正式工作預設設定 `HF_HUB_OFFLINE=1` 與 `TRANSFORMERS_OFFLINE=1`，因此必須在提交工作前完成下載及驗證。
+需要固定版本時，在執行前設定 `PATHOVISION_GEMMA_REVISION` 與 `PATHOVISION_MISTRAL_REVISION`；也可用 `HF_TOKEN` 取代互動式登入。Slurm 預設離線載入，所以提交 Job 前必須完成下載與驗證。
 
 ## 正式目錄契約
 

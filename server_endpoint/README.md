@@ -23,59 +23,30 @@ server_endpoint/
 └── TECHNOLOGY_STACK.md
 ```
 
-## 環境需求
+## 快速安裝
 
-- Linux 與 Slurm。
-- Python 3.9 以上。
-- 建議三張 NVIDIA H200 GPU。
-- 可存取 NCHC HFS 的計算節點。
-- FastAPI／YOLO 專用 Python venv。
-- 可執行 vLLM 的獨立環境。
-- 下載學生模型時可連線 Hugging Face，正式推論可離線。
-
-## 安裝 Server 環境
+需求：Linux、Slurm、Python 3.9 以上、三張 NVIDIA GPU、可用的 vLLM 環境，以及至少 180 GB 模型空間。
 
 ```bash
 cd /work/<USER>/2026_NCHC_Summer_Intern_Project/server_endpoint
+
+# Server 環境
 python3 -m venv .venv
 .venv/bin/python -m pip install --upgrade pip
 .venv/bin/python -m pip install -r requirements.txt
-```
 
-vLLM 使用獨立環境，並提供執行檔絕對路徑：
-
-```bash
-export PATHOVISION_VLLM_BIN=/absolute/path/to/vllm
-```
-
-## 安裝模型
-
-### YOLO
-
-將另行取得的權重包放到 repo 根目錄，再於本目錄解壓：
-
-```bash
+# 模型
 unzip ../2026_NCHC_Summer_Intern_Project_YOLO_weights.zip -d .
-sha256sum -c Localization_model/SHA256SUMS
-```
-
-完整說明請見 [`Localization_model/README.md`](Localization_model/README.md)。
-
-### Gemma4 與 Mistral
-
-```bash
 python3 -m pip install --user --upgrade huggingface_hub
 hf auth login
 ./scripts/install_student_vlm.sh
-```
-
-腳本會建立 `.hf-model-installer/`、下載到固定位置並驗證權重、Prompt、Schema 與 Skills。完整說明請見 [`Student_model/README.md`](Student_model/README.md)。
-
-全部模型就緒後可執行：
-
-```bash
 python3 scripts/verify_model_assets.py --include-yolo
+
+# Slurm 使用的 vLLM
+export PATHOVISION_VLLM_BIN=/absolute/path/to/vllm
 ```
+
+YOLO 權重包需另行取得；模型路徑與進階選項請見 [`Localization_model/README.md`](Localization_model/README.md) 及 [`Student_model/README.md`](Student_model/README.md)。
 
 ## 部署架構
 

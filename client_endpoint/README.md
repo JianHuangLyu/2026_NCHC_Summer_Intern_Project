@@ -20,52 +20,24 @@
 
 ## 系統需求
 
-- Windows 10 或 Windows 11。
-- Python 3.9 以上。
-- Windows OpenSSH Client。
-- 可連線至 NANO4 登入節點的網路環境。
-- 有效的 NANO4 帳號、密碼與二階段驗證方式。
+Windows 10／11、Python 3.9 以上、Windows OpenSSH Client，以及可登入 NANO4 並完成二階段驗證的帳號。
 
-## 安裝
+## 快速安裝
 
 在 Windows PowerShell 執行：
 
 ```powershell
 cd client_endpoint
 py -m venv .venv
-.venv\Scripts\python -m pip install --upgrade pip
 .venv\Scripts\python -m pip install -r requirements.txt
 .venv\Scripts\python app.py
 ```
 
-不需要選配 MCP façade 時可執行：
+不使用選配 MCP 時改以 `.venv\Scripts\python app.py --no-mcp` 啟動。預設介面為 `http://127.0.0.1:8200`。
 
-```powershell
-.venv\Scripts\python app.py --no-mcp
-```
+## NANO4 Server 路徑
 
-預設介面位址為 `http://127.0.0.1:8200`。
-
-## NANO4 Server 必要結構
-
-使用者端會尋找以下標記檔：
-
-```text
-/work/<USER>/2026_NCHC_Summer_Intern_Project/server_endpoint/pathovision_server.py
-```
-
-`server_endpoint/` 至少必須包含：
-
-```text
-server_endpoint/
-├── pathovision_server.py
-├── student_vlm.py
-├── slurm/
-├── Localization_model/
-└── Student_model/
-```
-
-如果使用非標準位置，可在遠端環境設定 `PATHOVISION_PROJECT_DIR`，其值必須直接指向 `server_endpoint/`，而不是 repo 根目錄。
+Client 預設尋找 `/work/<USER>/2026_NCHC_Summer_Intern_Project/server_endpoint/pathovision_server.py`。使用其他位置時，將遠端 `PATHOVISION_PROJECT_DIR` 直接指向 `server_endpoint/`。
 
 ## 操作流程
 

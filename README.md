@@ -191,25 +191,9 @@ YOLO11s 與 YOLO11m 另行打包為：
 
 ### 學生多模態模型一鍵安裝
 
-學生模型權重由 Hugging Face 下載，Prompt、Skills 與 Schema 已包含在 repo。兩個模型合計約 160 GB，建議至少預留 180 GB。
+學生模型由 Hugging Face 自動下載；兩個模型約 160 GB，建議預留 180 GB。下載已整合到下方 Server 快速安裝，單模型與固定 revision 選項請見 [`server_endpoint/Student_model/README.md`](server_endpoint/Student_model/README.md)。
 
-```bash
-cd /work/<USER>/2026_NCHC_Summer_Intern_Project/server_endpoint
-
-# 模型需要授權時先登入 Hugging Face
-python3 -m pip install --user --upgrade huggingface_hub
-hf auth login
-
-# 自動下載 Gemma4 與 Mistral，完成後自動驗證
-./scripts/install_student_vlm.sh
-
-# 同時驗證學生模型與另行放置的 YOLO 權重
-python3 scripts/verify_model_assets.py --include-yolo
-```
-
-單模型下載、固定 Hugging Face revision、斷點續傳、手動安裝及完整目錄契約請見 [`server_endpoint/Student_model/README.md`](server_endpoint/Student_model/README.md)。
-
-## 安裝
+## 快速安裝
 
 ### 一、NCHC Server
 
@@ -217,20 +201,21 @@ python3 scripts/verify_model_assets.py --include-yolo
 git clone https://github.com/ChienHaungLu/2026_NCHC_Summer_Intern_Project.git
 cd 2026_NCHC_Summer_Intern_Project/server_endpoint
 
-# 將另行取得、放在 repo 根目錄的 YOLO 壓縮包解到 Server 端點
+# 解壓另行取得、放在 repo 根目錄的 YOLO 權重
 unzip ../2026_NCHC_Summer_Intern_Project_YOLO_weights.zip -d .
-sha256sum -c Localization_model/SHA256SUMS
-
-# 建立 FastAPI／YOLO 執行環境
+# 安裝 Server 依賴
 python3 -m venv .venv
 .venv/bin/python -m pip install --upgrade pip
 .venv/bin/python -m pip install -r requirements.txt
 
-# 下載學生模型
+# 下載學生模型並驗證所有權重
+python3 -m pip install --user --upgrade huggingface_hub
+hf auth login
 ./scripts/install_student_vlm.sh
+python3 scripts/verify_model_assets.py --include-yolo
 ```
 
-vLLM 建議使用獨立環境，避免與 FastAPI／YOLO 的 CUDA、PyTorch 依賴互相影響：
+提交 Slurm 前指定獨立 vLLM 環境的執行檔：
 
 ```bash
 export PATHOVISION_VLLM_BIN=/absolute/path/to/vllm
@@ -238,23 +223,16 @@ export PATHOVISION_VLLM_BIN=/absolute/path/to/vllm
 
 ### 二、Windows Client
 
-將 `client_endpoint/` 複製到 Windows，或在 Windows clone 整個 repo 後執行：
+在 Windows PowerShell 執行：
 
 ```powershell
 cd client_endpoint
 py -m venv .venv
-.venv\Scripts\python -m pip install --upgrade pip
 .venv\Scripts\python -m pip install -r requirements.txt
 .venv\Scripts\python app.py
 ```
 
-不使用選配 MCP façade 時：
-
-```powershell
-.venv\Scripts\python app.py --no-mcp
-```
-
-預設介面位址為 `http://127.0.0.1:8200`。
+不使用選配 MCP 時改以 `.venv\Scripts\python app.py --no-mcp` 啟動。預設介面為 `http://127.0.0.1:8200`。
 
 ## 啟動與操作
 
