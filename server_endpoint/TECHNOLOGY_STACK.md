@@ -2,9 +2,7 @@
 
 本文件說明 PATHOVISION Analysis System 的實際技術組成、元件責任與資料流。根目錄 README 提供安裝與操作流程；目錄責任與產物交接請見 [docs/PROJECT_GUIDE.md](docs/PROJECT_GUIDE.md)。
 
-<table>
-  <tr><td bgcolor="#ffffff"><img src="Technology%20Stack.png" alt="PathoVision Technology Stack overview" /></td></tr>
-</table>
+
 
 > 圖片為技術分類總覽；下表依目前程式碼補充 YOLO11s、vLLM、Pydantic、Pillow、JSON Schema 與多 ROI 平行推論等最新實作。
 
