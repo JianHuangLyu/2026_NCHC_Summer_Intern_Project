@@ -1,4 +1,4 @@
-# PathoVision 系統整合專案指南
+# 系統整合專案指南
 
 本文件是 `/work/<USER>/2026_NCHC_Summer_Intern_Project/server_endpoint` 的維運與交接入口。此端點負責 NANO4 Slurm 工作、FastAPI、YOLO 定位、分析推論模型服務，以及個案／報告持久化。
 
