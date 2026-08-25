@@ -1,4 +1,4 @@
-# PathoVision NCHC 伺服器端
+# 病理醫學影像異常區域定位與結構化分析輔助系統-Server端
 
 `server_endpoint/` 是可獨立部署到 NCHC NANO4 的伺服器端專案根目錄，包含 FastAPI、YOLO、學生多模態模型控制檔、模型安裝工具、Slurm 啟動腳本、測試與維運文件。
 
