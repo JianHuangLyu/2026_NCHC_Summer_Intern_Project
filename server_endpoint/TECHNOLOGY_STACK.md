@@ -1,4 +1,4 @@
-# PathoVision Technology Stack
+# Technology Stack
 
 本文件說明 PATHOVISION Analysis System 的實際技術組成、元件責任與資料流。根目錄 README 提供安裝與操作流程；目錄責任與產物交接請見 [docs/PROJECT_GUIDE.md](docs/PROJECT_GUIDE.md)。
 
