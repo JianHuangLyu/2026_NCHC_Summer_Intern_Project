@@ -26,35 +26,6 @@
 
 每個結構化模型擁有自己的 `best_prompt/` 與 `best_skills/`。FastAPI 只有在權重、Prompt、Schema、Skill Registry、Registry 指定 Skills 與 vLLM endpoint 全部就緒時，才將模型標示為 `inference_ready=true`。
 
-## 資料流
-
-```mermaid
-sequenceDiagram
-    participant U as 使用者
-    participant C as Gradio Client
-    participant A as FastAPI Server
-    participant Y as YOLO
-    participant V as Gemma／Mistral vLLM
-    participant S as HFS Case Store
-
-    U->>C: 上傳病理影像
-    C->>A: POST /api/v1/analyses
-    A->>Y: YOLO11s／YOLO11m 定位
-    Y-->>A: 候選框
-    A->>S: 保存原圖、定位圖、analysis.json
-    A-->>C: 候選異常區域
-    U->>C: 勾選 ROI 並選擇一個分析推論模型
-    C->>A: POST selected detection indices
-    par 每模型最多兩個 ROI 平行
-        A->>V: ROI 1 + best prompt／skills／schema
-        A->>V: ROI 2 + best prompt／skills／schema
-    end
-    V-->>A: 每 ROI 一份結構化 JSON
-    A->>A: 個別 JSON Schema 驗證
-    A->>S: 保存 student_vlm_<model-key>_region_NNN.json
-    A-->>C: 全部模型 × 區域報告與狀態
-    C-->>U: 以獨立模型／異常區域選單切換報告
-```
 
 ## 推論與載入最佳化
 
