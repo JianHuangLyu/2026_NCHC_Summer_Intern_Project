@@ -1,4 +1,4 @@
-# PathoVision Windows 使用者端
+# 病理醫學影像異常區域定位與結構化分析輔助系統-Client端
 
 `client_endpoint/` 是可獨立放到 Windows localhost 的 Gradio 使用者端。它負責登入 NCHC NANO4、提交與管理 Slurm 工作、建立 SOCKS5h 通道、呼叫 REST API，以及呈現定位與結構化報告。
 
