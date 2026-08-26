@@ -6,6 +6,7 @@
 
 > 本工具僅供研究與形態學輔助分析，不可取代病理醫師判讀或正式診斷。
 
+<br>
 
 ## 功能
 
@@ -19,11 +20,13 @@
 - 以獨立下拉選單切換模型與 ROI 報告。
 - 管理個案資料，並在結束工作階段時歸還 Slurm 資源。
 
+<br>
 
 ## 系統需求
 
 Windows 10／11、Python 3.9 以上、Windows OpenSSH Client，以及可登入 NANO4 並完成二階段驗證的帳號。
 
+<br>
 
 ## 快速安裝
 
@@ -38,11 +41,13 @@ py -m venv .venv
 
 不使用選配 MCP 時改以 `.venv\Scripts\python app.py --no-mcp` 啟動。預設介面為 `http://127.0.0.1:8200`。
 
+<br>
 
 ## NANO4 Server 路徑
 
 Client 預設尋找 `/work/<USER>/2026_NCHC_Summer_Intern_Project/server_endpoint/pathovision_server.py`。使用其他位置時，將遠端 `PATHOVISION_PROJECT_DIR` 直接指向 `server_endpoint/`。
 
+<br>
 
 ## 操作流程
 
@@ -57,6 +62,7 @@ Client 預設尋找 `/work/<USER>/2026_NCHC_Summer_Intern_Project/server_endpoin
 9. 在報告頁切換模型與 ROI，或在個案紀錄頁管理資料。
 10. 使用「結束工作階段並歸還資源」或正常關閉 Client。
 
+<br>
 
 ## 三 GPU 配置
 
@@ -70,6 +76,7 @@ Client 會提交 `server_endpoint/slurm/pathovision_vlm_stack.sbatch`，預設�
 
 Slurm allocation 一進入 `RUNNING`，分析頁即可開啟。Gemma 與 Mistral 會平行載入；Client 每兩秒輪詢狀態，單一模型完成後便加入模型選單，不必等待另一個模型。
 
+<br>
 
 ## 安全設計
 
@@ -80,6 +87,7 @@ Slurm allocation 一進入 `RUNNING`，分析頁即可開啟。Gemma 與 Mistral
 - Client 只取消自己提交的 Slurm Job。
 - 模型與影像不會下載到 Windows。
 
+<br>
 
 ## 測試
 
@@ -88,6 +96,7 @@ cd client_endpoint
 python -m unittest discover -v . "test_*.py"
 ```
 
+<br>
 
 ## 常見問題
 
