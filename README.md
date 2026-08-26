@@ -65,6 +65,8 @@ YOLO11m 在 Recall、mAP50、mAP50–95 與 F1 score 表現最佳；YOLO11s 具�
 
 **Note: 粗體字代表最佳效能, 底線部分代表效能表現屬整體次佳者**
 
+<br>
+
 ### 三、教師引導的學生模型技能最佳化
 
 研究階段以醫療專用的 MedGemma 1.5 作為教師模型，提供結構化輸出參考；再以通用多模態學生模型 Mistral Small 3.1 與 Gemma4 進行比較。最佳化時不更新學生模型權重，而是把 Prompt 與 Skills 視為可訓練的外部文字參數，透過 SkillOpt 反覆評分與更新
@@ -79,6 +81,8 @@ Soft Score 綜合評估以下面向：
 - 描述與可見影像證據的一致性
 - 摘要一致性
 - 禁止性輸出避免能力，例如不應直接輸出診斷或惡性判定
+
+<br>
 
 #### SkillOpt 實驗結果
 
@@ -103,6 +107,7 @@ Mistral 的輸出格式與禁止性內容改善幅度最明顯；Gemma4 的基�
 
 </details>
 
+<br>
 
 ## 系統功能
 
@@ -116,6 +121,7 @@ Mistral 的輸出格式與禁止性內容改善幅度最明顯；Gemma4 的基�
 - Server 保存原圖、定位圖、ROI、個案 metadata 與模型 × ROI 報告
 - Client 可提交及取消 Slurm Job，並輪詢 REST、Gemma4、Mistral 的載入進度
 
+<br>
 
 ## 端點與部署架構
 
@@ -141,6 +147,8 @@ flowchart LR
     end
 ```
 
+<br>
+
 ### 部署邊界
 
 | 端點 | 放置位置 | 內容 | 不應放置的內容 |
@@ -150,6 +158,7 @@ flowchart LR
 
 Client 使用互動式 OpenSSH 完成密碼與二階段驗證，並透過同一工作階段提交 Slurm。實際 REST 流量經 localhost SOCKS5h 代理送到計算節點；vLLM 只綁定計算節點的 `127.0.0.1`，不直接暴露到外部網路。
 
+<br>
 
 ## 專案結構
 
@@ -176,10 +185,7 @@ Client 使用互動式 OpenSSH 完成密碼與二階段驗證，並透過同一�
 └── README.md
 ```
 
-
-## 模型資產
-
-GitHub repo 不包含大型模型權重、個案影像、報告或執行環境
+<br>
 
 ### YOLO 權重
 
@@ -200,10 +206,13 @@ YOLO11s 與 YOLO11m 另行打包為：
 
 權重包不在 GitHub 中，可從 [Google Drive 下載 YOLO 權重包](https://drive.google.com/file/d/14_QVjcctgqczYHWX9Ed3NhP7TnuASK_o/view?usp=sharing)。個別權重雜湊與驗證方式請見 [`server_endpoint/Localization_model/README.md`](server_endpoint/Localization_model/README.md)。
 
+<br>
+
 ### 學生多模態模型一鍵安裝
 
 學生模型由 Hugging Face 自動下載；兩個模型約 160 GB，建議預留 180 GB。下載已整合到下方 Server 快速安裝，單模型與固定 revision 選項請見 [`server_endpoint/Student_model/README.md`](server_endpoint/Student_model/README.md)
 
+<br>
 
 ## 快速安裝
 
@@ -233,6 +242,8 @@ python3 scripts/verify_model_assets.py --include-yolo
 export PATHOVISION_VLLM_BIN=/absolute/path/to/vllm
 ```
 
+<br>
+
 ### 二、Windows Client
 
 在 Windows PowerShell 執行：
@@ -246,6 +257,7 @@ py -m venv .venv
 
 不使用選配 MCP 時改以 `.venv\Scripts\python app.py --no-mcp` 啟動。預設介面為 `http://127.0.0.1:8200`
 
+<br>
 
 ## 啟動與操作
 
@@ -261,6 +273,8 @@ py -m venv .venv
 8. 到結構化報告頁查看模型 × ROI 報告，或在個案紀錄頁管理資料
 9. 正常關閉 Client 或按下結束工作階段，歸還 Slurm 資源
 
+<br>
+
 ### 手動提交三 GPU Stack
 
 ```bash
@@ -268,6 +282,8 @@ cd /work/<USER>/2026_NCHC_Summer_Intern_Project/server_endpoint
 export PATHOVISION_VLLM_BIN=/absolute/path/to/vllm
 sbatch --account=<wallet-id> slurm/pathovision_vlm_stack.sbatch
 ```
+
+<br>
 
 預設資源分配：
 
@@ -277,6 +293,7 @@ sbatch --account=<wallet-id> slurm/pathovision_vlm_stack.sbatch
 | 1 | Mistral Small 3.1 24B vLLM | 僅 `127.0.0.1` |
 | 2 | FastAPI、YOLO11s、YOLO11m | 經 SOCKS5h 由 Client 存取 |
 
+<br>
 
 ## 推論與保存流程
 
@@ -287,6 +304,8 @@ sbatch --account=<wallet-id> slurm/pathovision_vlm_stack.sbatch
 5. 每個 ROI 獨立送入所選學生模型，同模型預設最多兩個請求並行
 6. 推論套用模型專屬 Prompt、Skill Registry、Skills 與 JSON Schema
 7. 每個模型 × ROI 的輸出獨立驗證與保存，單區域失敗不會覆蓋其他成功報告
+
+<br>
 
 ```text
 .pathovision_server/cases/PV-.../
@@ -299,6 +318,7 @@ sbatch --account=<wallet-id> slurm/pathovision_vlm_stack.sbatch
 └── analysis.json
 ```
 
+<br>
 
 ## 主要環境變數
 
@@ -318,6 +338,7 @@ sbatch --account=<wallet-id> slurm/pathovision_vlm_stack.sbatch
 
 完整設定請參考 [`server_endpoint/.env.example`](server_endpoint/.env.example)。
 
+<br>
 
 ## 測試
 
@@ -336,6 +357,7 @@ python -m unittest discover -v . "test_*.py"
 
 GitHub Actions 會在 push 與 pull request 時執行相同的依賴安裝、Slurm 語法檢查及兩端測試
 
+<br>
 
 ## 限制與後續方向
 
@@ -345,6 +367,7 @@ GitHub Actions 會在 push 與 pull request 時執行相同的依賴安裝、Slu
 - 後續可加入專家盲評、跨資料集泛化測試、校準分析與臨床流程可用性研究
 - 系統應持續維持「可見形態描述」與「正式醫療診斷」之間的明確界線
 
+<br>
 
 ## 文件導覽
 
@@ -355,6 +378,7 @@ GitHub Actions 會在 push 與 pull request 時執行相同的依賴安裝、Slu
 - [`server_endpoint/TECHNOLOGY_STACK.md`](server_endpoint/TECHNOLOGY_STACK.md)：技術棧
 - [`server_endpoint/docs/PROJECT_GUIDE.md`](server_endpoint/docs/PROJECT_GUIDE.md)：維運、交接與資料治理
 
+<br>
 
 ## References
 
