@@ -380,7 +380,7 @@ GitHub Actions 會在 push 與 pull request 時執行相同的依賴安裝、Slu
 
 <br>
 
-## References
+## 參考資料
 
 1. Zhong, C., et al. [PathVG: A New Benchmark and Dataset for Pathology Visual Grounding](https://arxiv.org/abs/2502.20869). A pathology visual grounding benchmark and the source of the RefPath dataset.
 2. Yang, Y., et al. [SkillOpt: Executive Strategy for Self-Evolving Agent Skills](https://arxiv.org/abs/2605.23904). A text-space optimization framework for improving external skills while keeping model weights frozen.
