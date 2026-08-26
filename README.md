@@ -1,11 +1,11 @@
 # 病理影像異常區域定位與結構化分析系統
 
-病理影像異常區域定位與結構化分析系統 結合 YOLO 異常區域定位、教師模型引導的技能／提示詞最佳化，以及學生多模態模型的結構化推論。系統先在病理影像中找出候選異常區域，再由使用者選擇真正要分析的 ROI，最後以固定 JSON Schema 產生逐區域、可追溯且可保存的形態學報告。
+病理影像異常區域定位與結構化分析系統 結合 YOLO 異常區域定位、教師模型引導的技能／提示詞最佳化，以及學生多模態模型的結構化推論。系統先在病理影像中找出候選異常區域，再由使用者選擇真正要分析的 ROI，最後以固定 JSON Schema 產生逐區域、可追溯且可保存的形態學報告
 
-專案採用兩端點交付：Windows 使用者端放在 `client_endpoint/`；NCHC NANO4 的 API、模型、Slurm 與個案資料全部集中在 `server_endpoint/`。大型模型與醫療影像不需要離開伺服器。
+專案採用兩端點交付：Windows 使用者端放在 `client_endpoint/`；NCHC NANO4 的 API、模型、Slurm 與個案資料全部集中在 `server_endpoint/`。大型模型與醫療影像不需要離開伺服器
 
 > [!CAUTION]
-> 本系統是研究用途的非診斷性病理影像形態輔助工具。YOLO 框選、模型文字與結構化報告都必須由合格專業人員複核，不得取代病理醫師判讀、臨床資訊整合、正式病理報告或醫療決策。
+> 本系統是研究用途的非診斷性病理影像形態輔助工具。YOLO 框選、模型文字與結構化報告都必須由合格專業人員複核，不得取代病理醫師判讀、臨床資訊整合、正式病理報告或醫療決策
 
 
 ## 專案資訊欄
@@ -20,10 +20,10 @@
 
 病理影像的異常區域定位與文字分析是影像解讀的重要基礎，但逐張檢視、人工框選與撰寫報告相當耗時，且自由文字不容易進行後續比較、統計與系統整合。本專案希望建立一條可重現的兩階段流程：
 
-1. 以 YOLO 快速定位候選異常區域。
-2. 只針對使用者選取的 ROI 執行多模態模型分析。
-3. 以 Prompt、Skills 與 JSON Schema 約束輸出，減少格式漂移與禁止性診斷內容。
-4. 將每個模型 × 每個 ROI 的結果獨立保存，供人工複核與回溯。
+1. 以 YOLO 快速定位候選異常區域
+2. 只針對使用者選取的 ROI 執行多模態模型分析
+3. 以 Prompt、Skills 與 JSON Schema 約束輸出，減少格式漂移與禁止性診斷內容
+4. 將每個模型 × 每個 ROI 的結果獨立保存，供人工複核與回溯
 
 
 ## 研究方法
@@ -65,18 +65,18 @@ YOLO11m 在 Recall、mAP50、mAP50–95 與 F1 score 表現最佳；YOLO11s 具�
 
 ### 三、教師引導的學生模型技能最佳化
 
-研究階段以醫療專用的 MedGemma 1.5 作為教師模型，提供結構化輸出參考；再以通用多模態學生模型 Mistral Small 3.1 與 Gemma4 進行比較。最佳化時不更新學生模型權重，而是把 Prompt 與 Skills 視為可訓練的外部文字參數，透過 SkillOpt 反覆評分與更新。
+研究階段以醫療專用的 MedGemma 1.5 作為教師模型，提供結構化輸出參考；再以通用多模態學生模型 Mistral Small 3.1 與 Gemma4 進行比較。最佳化時不更新學生模型權重，而是把 Prompt 與 Skills 視為可訓練的外部文字參數，透過 SkillOpt 反覆評分與更新
 
-教師模型只參與離線研究與最佳化，不是線上部署的必要服務。部署端使用經審查的 `best_prompt/`、`best_skills/` 與凍結的學生模型權重。
+教師模型只參與離線研究與最佳化，不是線上部署的必要服務。部署端使用經審查的 `best_prompt/`、`best_skills/` 與凍結的學生模型權重
 
 Soft Score 綜合評估以下面向：
 
-- JSON Schema 合法性。
-- 欄位值與教師參考的 Token F1 相似度。
-- 狀態欄位正確性。
-- 描述與可見影像證據的一致性。
-- 摘要一致性。
-- 禁止性輸出避免能力，例如不應直接輸出診斷或惡性判定。
+- JSON Schema 合法性
+- 欄位值與教師參考的 Token F1 相似度
+- 狀態欄位正確性
+- 描述與可見影像證據的一致性
+- 摘要一致性
+- 禁止性輸出避免能力，例如不應直接輸出診斷或惡性判定
 
 #### SkillOpt 實驗結果
 
@@ -87,7 +87,7 @@ Soft Score 綜合評估以下面向：
 | Gemma4 | Skills | 0.4272 → 0.4300 | 95.68% → 95.94% | 581 → 546 |
 | Gemma4 | Prompt | 0.1670 → 0.1691 | 95.35% → 97.34% | 626 → 358 |
 
-Mistral 的輸出格式與禁止性內容改善幅度最明顯；Gemma4 的基線 Schema 合法率已高，因此增益較小。欄位內容相似度並非所有設定都同步上升，顯示「格式更正確」不等於「內容一定更接近教師」，仍需要病理專業人工驗證。
+Mistral 的輸出格式與禁止性內容改善幅度最明顯；Gemma4 的基線 Schema 合法率已高，因此增益較小。欄位內容相似度並非所有設定都同步上升，顯示「格式更正確」不等於「內容一定更接近教師」，仍需專業人員進行後續驗證
 
 <details>
 <summary>查看欄位內容相似度完整結果</summary>
@@ -104,15 +104,15 @@ Mistral 的輸出格式與禁止性內容改善幅度最明顯；Gemma4 的基�
 
 ## 系統功能
 
-- 可選擇 YOLO11s 或 YOLO11m 進行異常區域定位。
-- YOLO 無偵測結果時不啟動學生模型，避免無目標推論。
-- 同一影像可勾選多個 ROI，且只分析被選取的區域。
-- Gemma4 與 Mistral Small 3.1 可分別分析相同 ROI，報告互不覆蓋。
-- 每份輸出套用模型專屬 Prompt、Skill Registry、Skills 與 JSON Schema。
-- 報告頁可獨立切換模型與 ROI，結果以病理專業繁體中文呈現。
-- 個案紀錄支援新增、載入、欄位修改、個案編號修改與整筆刪除。
-- Server 保存原圖、定位圖、ROI、個案 metadata 與模型 × ROI 報告。
-- Client 可提交及取消 Slurm Job，並輪詢 REST、Gemma4、Mistral 的載入進度。
+- 可選擇 YOLO11s 或 YOLO11m 進行異常區域定位
+- YOLO 無偵測結果時不啟動學生模型，避免無目標推論
+- 同一影像可勾選多個 ROI，且只分析被選取的區域
+- Gemma4 與 Mistral Small 3.1 可分別分析相同 ROI，報告互不覆蓋
+- 每份輸出套用模型專屬 Prompt、Skill Registry、Skills 與 JSON Schema
+- 報告頁可獨立切換模型與 ROI，結果以病理專業繁體中文呈現
+- 個案紀錄支援新增、載入、欄位修改、個案編號修改與整筆刪除
+- Server 保存原圖、定位圖、ROI、個案 metadata 與模型 × ROI 報告
+- Client 可提交及取消 Slurm Job，並輪詢 REST、Gemma4、Mistral 的載入進度
 
 
 ## 端點與部署架構
@@ -177,7 +177,7 @@ Client 使用互動式 OpenSSH 完成密碼與二階段驗證，並透過同一�
 
 ## 模型資產
 
-GitHub repo 不包含大型模型權重、個案影像、報告或執行環境。
+GitHub repo 不包含大型模型權重、個案影像、報告或執行環境
 
 ### YOLO 權重
 
@@ -200,7 +200,7 @@ YOLO11s 與 YOLO11m 另行打包為：
 
 ### 學生多模態模型一鍵安裝
 
-學生模型由 Hugging Face 自動下載；兩個模型約 160 GB，建議預留 180 GB。下載已整合到下方 Server 快速安裝，單模型與固定 revision 選項請見 [`server_endpoint/Student_model/README.md`](server_endpoint/Student_model/README.md)。
+學生模型由 Hugging Face 自動下載；兩個模型約 160 GB，建議預留 180 GB。下載已整合到下方 Server 快速安裝，單模型與固定 revision 選項請見 [`server_endpoint/Student_model/README.md`](server_endpoint/Student_model/README.md)
 
 
 ## 快速安裝
@@ -242,22 +242,22 @@ py -m venv .venv
 .venv\Scripts\python app.py
 ```
 
-不使用選配 MCP 時改以 `.venv\Scripts\python app.py --no-mcp` 啟動。預設介面為 `http://127.0.0.1:8200`。
+不使用選配 MCP 時改以 `.venv\Scripts\python app.py --no-mcp` 啟動。預設介面為 `http://127.0.0.1:8200`
 
 
 ## 啟動與操作
 
 ### 建議方式：由 Client 自動配置
 
-1. 在 Windows 啟動 `client_endpoint/app.py`。
-2. 輸入 NANO4 帳號、密碼並完成二階段驗證。
-3. 選擇 `/work/<USER>/2026_NCHC_Summer_Intern_Project/server_endpoint`。
-4. 選擇 Slurm partition、account 與資源後提交工作。
-5. Job 進入 `RUNNING` 後即可進入分析頁；模型載入狀態會每兩秒更新。
-6. 上傳原始影像並選擇 YOLO11s 或 YOLO11m。
-7. 勾選要分析的 ROI，再選擇 Gemma4 或 Mistral Small 3.1。
-8. 到結構化報告頁查看模型 × ROI 報告，或在個案紀錄頁管理資料。
-9. 正常關閉 Client 或按下結束工作階段，歸還 Slurm 資源。
+1. 在 Windows 啟動 `client_endpoint/app.py`
+2. 輸入 NANO4 帳號、密碼並完成二階段驗證
+3. 選擇 `/work/<USER>/2026_NCHC_Summer_Intern_Project/server_endpoint`
+4. 選擇 Slurm partition、account 與資源後提交工作
+5. Job 進入 `RUNNING` 後即可進入分析頁；模型載入狀態會每兩秒更新
+6. 上傳原始影像並選擇 YOLO11s 或 YOLO11m
+7. 勾選要分析的 ROI，再選擇 Gemma4 或 Mistral Small 3.1
+8. 到結構化報告頁查看模型 × ROI 報告，或在個案紀錄頁管理資料
+9. 正常關閉 Client 或按下結束工作階段，歸還 Slurm 資源
 
 ### 手動提交三 GPU Stack
 
@@ -278,13 +278,13 @@ sbatch --account=<wallet-id> slurm/pathovision_vlm_stack.sbatch
 
 ## 推論與保存流程
 
-1. Client 上傳未標註的原始影像。
-2. Server 用指定 YOLO 定位候選區域並建立個案。
-3. 使用者勾選一個或多個 ROI；沒有偵測或沒有勾選時流程停止。
-4. Server 從保存的乾淨原圖裁切 ROI，不使用畫過框的預覽圖。
-5. 每個 ROI 獨立送入所選學生模型，同模型預設最多兩個請求並行。
-6. 推論套用模型專屬 Prompt、Skill Registry、Skills 與 JSON Schema。
-7. 每個模型 × ROI 的輸出獨立驗證與保存，單區域失敗不會覆蓋其他成功報告。
+1. Client 上傳未標註的原始影像
+2. Server 用指定 YOLO 定位候選區域並建立個案
+3. 使用者勾選一個或多個 ROI；沒有偵測或沒有勾選時流程停止
+4. Server 從保存的乾淨原圖裁切 ROI，不使用畫過框的預覽圖
+5. 每個 ROI 獨立送入所選學生模型，同模型預設最多兩個請求並行
+6. 推論套用模型專屬 Prompt、Skill Registry、Skills 與 JSON Schema
+7. 每個模型 × ROI 的輸出獨立驗證與保存，單區域失敗不會覆蓋其他成功報告
 
 ```text
 .pathovision_server/cases/PV-.../
@@ -332,26 +332,26 @@ cd ../client_endpoint
 python -m unittest discover -v . "test_*.py"
 ```
 
-GitHub Actions 會在 push 與 pull request 時執行相同的依賴安裝、Slurm 語法檢查及兩端測試。
+GitHub Actions 會在 push 與 pull request 時執行相同的依賴安裝、Slurm 語法檢查及兩端測試
 
 
 ## 限制與後續方向
 
-- Teacher 與 Student 仍可能產生幻覺或未被影像支持的描述。
-- Schema 合法只能證明格式正確，不能證明內容具臨床正確性。
-- 目前評估依賴教師參考與自動指標，仍需病理專家進行外部驗證。
-- 後續可加入專家盲評、跨資料集泛化測試、校準分析與臨床流程可用性研究。
-- 系統應持續維持「可見形態描述」與「正式醫療診斷」之間的明確界線。
+- Teacher 與 Student 仍可能產生幻覺或未被影像支持的描述
+- Schema 合法只能證明格式正確，不能證明內容具臨床正確性
+- 目前評估依賴教師參考與自動指標，仍需病理專家進行外部驗證
+- 後續可加入專家盲評、跨資料集泛化測試、校準分析與臨床流程可用性研究
+- 系統應持續維持「可見形態描述」與「正式醫療診斷」之間的明確界線
 
 
 ## 文件導覽
 
-- [`client_endpoint/README.md`](client_endpoint/README.md)：Windows 使用者端安裝與操作。
-- [`server_endpoint/README.md`](server_endpoint/README.md)：NCHC Server 端獨立部署。
-- [`server_endpoint/Student_model/README.md`](server_endpoint/Student_model/README.md)：學生模型下載、放置與驗證。
-- [`server_endpoint/Localization_model/README.md`](server_endpoint/Localization_model/README.md)：YOLO 權重包與 SHA-256。
-- [`server_endpoint/TECHNOLOGY_STACK.md`](server_endpoint/TECHNOLOGY_STACK.md)：技術棧。
-- [`server_endpoint/docs/PROJECT_GUIDE.md`](server_endpoint/docs/PROJECT_GUIDE.md)：維運、交接與資料治理。
+- [`client_endpoint/README.md`](client_endpoint/README.md)：Windows 使用者端安裝與操作
+- [`server_endpoint/README.md`](server_endpoint/README.md)：NCHC Server 端獨立部署
+- [`server_endpoint/Student_model/README.md`](server_endpoint/Student_model/README.md)：學生模型下載、放置與驗證
+- [`server_endpoint/Localization_model/README.md`](server_endpoint/Localization_model/README.md)：YOLO 權重包與 SHA-256
+- [`server_endpoint/TECHNOLOGY_STACK.md`](server_endpoint/TECHNOLOGY_STACK.md)：技術棧
+- [`server_endpoint/docs/PROJECT_GUIDE.md`](server_endpoint/docs/PROJECT_GUIDE.md)：維運、交接與資料治理
 
 
 ## References
