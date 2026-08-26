@@ -26,11 +26,11 @@
 
 ## 研究方法
 
-![研究方法架構圖](server_endpoint/docs/assets/Model.png)
+![方法架構圖](server_endpoint/docs/assets/Model.png)
 
-### 一、RefPath 資料整理
+### 一、資料前處理
 
-研究以 RefPath 病理視覺定位資料為基礎。原始資料提供病理影像、自然語言區域描述及 bounding box；本專案再整理成 YOLO 訓練與評估所需記錄。簡報所列的專案處理後切分如下：
+本專案以 RefPath 病理視覺定位資料為想法去延伸。原始資料提供病理影像、自然語言區域描述及 bounding box；本專案再整理成 YOLO 訓練與評估所需記錄。簡報所列的專案處理後切分如下：
 
 | 資料 | 記錄數 | 比例 |
 |---|---:|---:|
@@ -67,9 +67,7 @@ YOLO11m 在 Recall、mAP50、mAP50–95 與 F1 score 表現最佳；YOLO11s 具�
 
 ### 三、教師引導的學生模型技能最佳化
 
-使用雲端醫療特化專用的 MedGemma 1.5 作為教師模型，提供結構化輸出參考；再以地端通用VLM學生模型 Mistral Small 3.1 與 Gemma4 進行比較。最佳化時不更新學生模型權重(fine tune)，而是把 Prompt 與 Skills 視為可訓練的外部文字參數，透過 SkillOpt 反覆評分與更新
-
-教師模型只參與離線研究與最佳化，不是線上部署必要服務。部署端使用經審查的 `best_prompt/`、`best_skills/` 與凍結的學生模型權重
+使用雲端醫療特化專用的 MedGemma 1.5 作為教師模型，提供結構化輸出參考；再以地端通用VLM學生模型 Mistral Small 3.1 與 Gemma4 進行比較。最佳化時不更新學生模型權重(fine tune)，而是把 Prompt 與 Skills 視為可訓練的外部文字參數，透過 SkillOpt 反覆評分與更新。部署端使用經審查的 `best_prompt/`、`best_skills/` 與凍結的學生模型權重
 
 Soft Score 綜合評估以下面向：
 
