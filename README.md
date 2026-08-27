@@ -109,13 +109,13 @@ Mistral 的輸出格式與禁止性內容改善幅度最明顯；Gemma4 的basel
 
 - 可選擇 YOLO11s 或 YOLO11m 進行異常區域定位
 - YOLO 無偵測結果時不啟動學生模型，避免無目標推論
-- 同一影像可勾選多個 ROI，且只分析被選取的區域
+- 同一影像可勾選多個 ROI，且只分析被選取的區域 (多個區域需分析，採平行處理方式)
 - Gemma4 與 Mistral Small 3.1 可分別分析相同 ROI，報告互不覆蓋
 - 每份輸出套用模型專屬 Prompt、Skill Registry、Skills 與 JSON Schema
 - 報告頁可獨立切換模型與 ROI，結果以病理專業繁體中文呈現
 - 個案紀錄支援新增、載入、欄位修改、個案編號修改與整筆刪除
 - Server 保存原圖、定位圖、ROI、個案 metadata 與模型 × ROI 報告
-- Client 可提交及取消 Slurm Job，並輪詢 REST、Gemma4、Mistral 的載入進度
+- Client 可提交及取消 Slurm Job，並輪詢(polling)模型載入的進度
 
 <br>
 
@@ -251,7 +251,7 @@ py -m venv .venv
 .venv\Scripts\python app.py
 ```
 
-不使用選配 MCP 時改以 `.venv\Scripts\python app.py --no-mcp` 啟動。預設介面為 `http://127.0.0.1:8200`
+不使用選配 MCP 時改以 `.venv\Scripts\python app.py --no-mcp` 啟動。預設介面網址為 `http://127.0.0.1:8200`
 
 <br>
 
