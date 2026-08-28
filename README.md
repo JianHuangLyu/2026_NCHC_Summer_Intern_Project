@@ -150,7 +150,7 @@ flowchart LR
 | 端點 | 放置位置 | 內容 | 不應放置的內容 |
 |---|---|---|---|
 | `client_endpoint/` | Windows localhost | Gradio UI、REST Client、OpenSSH／SOCKS5h、Slurm 管理 | 模型權重、病理影像、Server 個案資料 |
-| `server_endpoint/` | NCHC NANO4 的 `/work/<USER>/...` | FastAPI、YOLO、學生模型、vLLM 啟動、Slurm、個案資料 | SSH 密碼、OTP、提交至 Git 的 token |
+| `server_endpoint/PathoVision_Server` | NCHC NANO4 的 `/work/<USER>/PathoVision_Server` | FastAPI、YOLO、學生模型、vLLM 啟動、Slurm、個案資料 | SSH 密碼、OTP、提交至 Git 的 token |
 
 Client 使用互動式 OpenSSH 完成密碼與二階段驗證，並透過同一工作階段提交 Slurm。實際 REST 流量經 localhost SOCKS5h 代理送到計算節點；vLLM 只綁定計算節點的 `127.0.0.1`，不直接暴露到外部網路。
 
