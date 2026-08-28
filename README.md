@@ -119,7 +119,7 @@ Mistral 的輸出格式與禁止性內容改善幅度最明顯；Gemma4 的basel
 
 <br>
 
-## 端點與部署架構
+## Client-Server部署架構
 
 ```mermaid
 flowchart LR
