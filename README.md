@@ -15,6 +15,7 @@
 - 實習單位：財團法人國家實驗研究院國家高速網路與計算中心
 - 專案時間：2026/7/1 - 2026/8/31
 - [專案系統Demo](https://youtu.be/1BliE2S8V1c?si=kTP0cn_zLIU2wzj2)
+- [實習成果簡報](Intern%20Presentation/NCHC_Intern_Presentation.pptx)
 
 <br>
 
@@ -177,6 +178,8 @@ Client 使用互動式 OpenSSH 完成密碼與二階段驗證，並透過同一�
 │   ├── docs/                        # 維運與交接文件
 │   ├── requirements.txt
 │   └── TECHNOLOGY_STACK.md
+├── Intern Presentation/
+│   └── NCHC_Intern_Presentation.pptx # 實習成果簡報
 ├── .github/workflows/ci.yml
 └── README.md
 ```
@@ -367,6 +370,7 @@ GitHub Actions 會在 push 與 pull request 時執行相同的依賴安裝、Slu
 
 ## 文件導覽
 
+- [`NCHC_Intern_Presentation.pptx`](Intern%20Presentation/NCHC_Intern_Presentation.pptx)：實習成果簡報
 - [`client_endpoint/README.md`](client_endpoint/README.md)：Windows 使用者端安裝與操作
 - [`server_endpoint/README.md`](server_endpoint/README.md)：NCHC Server 端獨立部署
 - [`server_endpoint/Student_model/README.md`](server_endpoint/Student_model/README.md)：學生模型下載、放置與驗證
