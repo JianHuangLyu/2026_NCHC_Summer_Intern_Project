@@ -19,19 +19,19 @@
 
 <br>
 
-## 研究動機
+## 動機
 
 病理醫學影像異常區域準確定位與分析是影像判讀及臨床診斷重要基礎。傳統病理影像仰賴醫師逐一閱片標註異常區域及撰寫分析報告，不僅耗費大量時間且易出錯，因此本專案提出基於病理影像異常區域偵測與教師引導學生技能最佳化之結構化分析方法，以利於後續改善病理影像判讀及分析之流程效率
 
 <br>
 
-## 研究方法
+## 方法
 
 ![方法架構圖](server_endpoint/docs/assets/Model.png)
 
 ### 一、資料前處理
 
-本專案以 RefPath 病理視覺定位資料為想法去延伸。原始資料提供病理影像、自然語言區域描述及 bounding box；本專案再整理成 YOLO 訓練與評估所需記錄。簡報所列的專案處理後切分如下：
+本專案以 RefPath 病理視覺定位資料為想法去延伸。原始資料提供病理影像、自然語言區域描述及 bounding box；本專案再整理成 YOLO 訓練與評估所需記錄。所列的專案處理後切分如下：
 
 | 資料 | 記錄數 | 比例 |
 |---|---:|---:|
@@ -40,7 +40,7 @@
 | 測試集 | 13,464 | 10.12% |
 | 合計 | 133,096 | 100% |
 
-涵蓋內容包括肺癌、乳癌、腎癌與淋巴結轉移相關病理影像。上述數量是本專案經資料展開與整理後的訓練記錄數，不等同於 RefPath 官方公布的原始影像數或框選數。
+涵蓋內容包括肺癌、乳癌、腎癌與淋巴結轉移相關病理影像。上述數量是本專案經data augmentation與整理後的記錄數，不等同於 RefPath 官方公布的原始資料數目
 
 <br>
 
@@ -60,7 +60,7 @@
 | YOLO26s | 9.5 | 76.0% | 79.8% | 85.2% | 70.1% | 0.779 |
 | YOLO26m | 20.4 | 72.1% | 77.4% | 80.5% | 64.8% | 0.746 |
 
-YOLO11m 在 Recall、mAP50、mAP50–95 與 F1 score 表現最佳；YOLO11s 具有最高 Precision，且以較少參數維持接近 YOLO11m 的效能。因此部署端保留兩種選擇：YOLO11s 偏向速度與資源效率，YOLO11m 偏向整體定位效果。
+YOLO11m 在 Recall、mAP50、mAP50–95 與 F1 score 表現最佳；YOLO11s 具有最高 Precision，且以較少參數維持接近 YOLO11m 的效能。因此部署端保留兩種選擇：YOLO11s 偏向速度與資源效率，YOLO11m 偏向整體定位效果
 
 **Note: 粗體字代表最佳效能, 底線部分代表效能表現屬整體次佳者**
 
@@ -203,7 +203,7 @@ YOLO11s 與 YOLO11m 另行打包為：
 7731db12b1c3fcdb39fe036772e0b69ab851ce8c80570626da85c5d42737a000
 ```
 
-權重包不在 GitHub 中，可從 [Google Drive 下載 YOLO 權重包](https://drive.google.com/file/d/14_QVjcctgqczYHWX9Ed3NhP7TnuASK_o/view?usp=sharing)。個別權重雜湊與驗證方式請見 [`server_endpoint/Localization_model/README.md`](server_endpoint/Localization_model/README.md)。
+權重包不在 GitHub 中，可從 [Google Drive 下載 YOLO 權重包](https://drive.google.com/file/d/14_QVjcctgqczYHWX9Ed3NhP7TnuASK_o/view?usp=sharing)。個別權重雜湊與驗證方式請見 [`server_endpoint/Localization_model/README.md`](server_endpoint/Localization_model/README.md)
 
 <br>
 
@@ -335,7 +335,7 @@ sbatch --account=<wallet-id> slurm/pathovision_vlm_stack.sbatch
 | `PATHOVISION_VLLM_MAX_MODEL_LEN` | vLLM context 上限，預設 49,152 |
 | `PATHOVISION_YOLO_HALF` | GPU YOLO 使用 FP16，預設 1 |
 
-完整設定請參考 [`server_endpoint/.env.example`](server_endpoint/.env.example)。
+完整設定請參考 [`server_endpoint/.env.example`](server_endpoint/.env.example)
 
 <br>
 
