@@ -14,8 +14,8 @@
 - 專案作者：呂建篁
 - 實習單位：財團法人國家實驗研究院國家高速網路與計算中心
 - 專案時間：2026/7/1 - 2026/8/31
-- [專案系統Demo](https://youtu.be/1BliE2S8V1c?si=kTP0cn_zLIU2wzj2)
-- [實習成果簡報](Intern%20Presentation/NCHC_Intern_Presentation.pptx)
+- [Demo](https://youtu.be/1BliE2S8V1c)
+- [成果簡報](Intern%20Presentation/NCHC_Intern_Presentation.pptx)
 
 <br>
 
