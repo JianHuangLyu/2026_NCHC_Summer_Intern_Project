@@ -158,7 +158,7 @@ Client 使用互動式 OpenSSH 完成密碼與二階段驗證，並透過同一�
 ## 專案結構
 
 ```text
-2026_NCHC_Summer_Intern_Project/
+Project/
 ├── client_endpoint/                 # 可獨立放到 Windows 的使用者端
 │   ├── app.py
 │   ├── api_client.py
