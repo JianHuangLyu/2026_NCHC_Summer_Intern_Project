@@ -391,5 +391,3 @@ GitHub Actions 會在 push 與 pull request 時執行相同的依賴安裝、Slu
 9. Vocus, “Google MedGemma 1.5：看懂 CT、聽懂醫囑的專業醫療 AI 模型.”[Online]. Available: https://vocus.cc/article/69690df3fd89780001e3e256
 10. Google, “Gemma 4 模型總覽,” Google AI for Developers. [Online]. Available: https://ai.google.dev/gemma/docs/core?hl=zh-tw
 11. NCHC,　“晶創主機(Nano5) - 使用說明”　 [Online]. Available: https://man.twcc.ai/@AI-Pilot/manual#%E6%99%B6%E5%89%B5%E4%B8%BB%E6%A9%9FNano5---%E4%BD%BF%E7%94%A8%E8%AA%AA%E6%98%8E
-<img width="2521" height="493" alt="image" src="https://github.com/user-attachments/assets/8eeac947-c94b-4ebc-a961-30b0667994e4" />
-
