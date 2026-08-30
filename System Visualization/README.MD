@@ -14,15 +14,9 @@
 
 <table><tr><td><img src="Analysis%20System/0003.jpg" alt="0003"></td></tr></table>
 
-<br><br>
-
 <table><tr><td><img src="Analysis%20System/0004.jpg" alt="0004"></td></tr></table>
 
-<br><br>
-
 <table><tr><td><img src="Analysis%20System/0005.jpg" alt="0005"></td></tr></table>
-
-<br><br>
 
 <table><tr><td><img src="Analysis%20System/0006.jpg" alt="0006"></td></tr></table>
 
