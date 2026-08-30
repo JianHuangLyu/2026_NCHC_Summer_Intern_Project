@@ -6,8 +6,6 @@
 ## 登入介面
 <table><tr><td><img src="Login/0001.jpg" alt="0001"></td></tr></table>
 
-<br><br>
-
 <table><tr><td><img src="Login/0002.jpg" alt="0002"></td></tr></table>
 
 <br><br>
@@ -57,7 +55,7 @@
 
 <table><tr><td><img src="Analysis%20System/0013.jpg" alt="0013"></td></tr></table>
 
-
+<br><br>
 
 ## 個案紀錄存取
 
