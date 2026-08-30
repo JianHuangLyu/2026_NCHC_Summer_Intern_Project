@@ -9,21 +9,22 @@
 
 <br>
 
-## 專案資訊欄
+## 專案資訊欄🪪
 
 - Project Author：Jian Huang Lyu
+- Email: a7929771@gmail.com
 - [Demo](https://youtu.be/1BliE2S8V1c)
 - [Presentation](Intern%20Presentation/NCHC_Intern_Presentation.pptx)
 
 <br>
 
-## 動機
+## 動機🔬
 
 病理醫學影像異常區域準確定位與分析是影像判讀及臨床診斷重要基礎。傳統病理影像仰賴醫師逐一閱片標註異常區域及撰寫分析報告，不僅耗費大量時間且易出錯，因此本專案提出基於病理影像異常區域偵測與教師引導學生技能最佳化之結構化分析方法，以利於後續改善病理影像判讀及分析之流程效率
 
 <br>
 
-## 方法
+## 方法及實驗📚
 
 ![方法架構圖](server_endpoint/docs/assets/Model.png)
 
@@ -44,7 +45,9 @@
 
 ### 二、YOLO 異常區域定位
 
-在一致的資料與實驗設定下比較 9 個 YOLO 變體，並以 Precision、Recall、mAP 與 F1 score 評估：
+在一致的資料與實驗設定下比較 9 個 YOLO 變體，並以 Precision、Recall、mAP 與 F1 score 評估!
+
+#### 不同YOLO模型實驗結果
 
 | 模型 | 參數量（M） | Precision | Recall | mAP50 | mAP50–95 | F1 score |
 |---|---:|---:|---:|---:|---:|---:|
@@ -79,7 +82,7 @@ Soft Score 綜合評估以下面向：
 
 <br>
 
-#### SkillOpt 實驗結果
+#### SkillOpt實驗結果
 
 | 學生模型 | 最佳化對象 | Soft Score | Schema 合法率 | 禁止性輸出案例數 |
 |---|---|---:|---:|---:|
@@ -104,7 +107,7 @@ Mistral 的輸出格式與禁止性內容改善幅度最明顯；Gemma4 的basel
 
 <br>
 
-## 系統功能
+## 系統功能🖥️
 
 - 可選擇 YOLO11s 或 YOLO11m 進行異常區域定位
 - YOLO 無偵測結果時不啟動學生模型，避免無目標推論
@@ -118,7 +121,7 @@ Mistral 的輸出格式與禁止性內容改善幅度最明顯；Gemma4 的basel
 
 <br>
 
-## Client-Server部署架構
+## Client-Server部署架構🌏
 
 ```mermaid
 flowchart LR
@@ -144,7 +147,7 @@ flowchart LR
 
 <br>
 
-### 部署邊界
+### 部署邊界🚧
 
 | 端點 | 放置位置 | 內容 | 不應放置的內容 |
 |---|---|---|---|
@@ -155,7 +158,7 @@ Client 使用互動式 OpenSSH 完成密碼與二階段驗證，並透過同一�
 
 <br>
 
-## 專案結構
+## 專案結構📑
 
 ```text
 Project/
@@ -211,7 +214,7 @@ YOLO11s 與 YOLO11m 另行打包為：
 
 <br>
 
-## 快速安裝
+## 快速安裝📩
 
 ### 一、NCHC Server
 
@@ -256,7 +259,7 @@ py -m venv .venv
 
 <br>
 
-## 啟動與操作
+## 啟動與操作🧑‍💻
 
 ### 建議方式：由 Client 自動配置
 
@@ -292,7 +295,7 @@ sbatch --account=<wallet-id> slurm/pathovision_vlm_stack.sbatch
 
 <br>
 
-## 推論與保存流程
+## 推論與保存流程⚓
 
 1. Client 上傳未標註的原始影像
 2. Server 用指定 YOLO 定位候選區域並建立個案
@@ -317,7 +320,7 @@ sbatch --account=<wallet-id> slurm/pathovision_vlm_stack.sbatch
 
 <br>
 
-## 主要環境變數
+## 主要環境變數⚙️
 
 | 變數 | 預設值或用途 |
 |---|---|
@@ -337,7 +340,7 @@ sbatch --account=<wallet-id> slurm/pathovision_vlm_stack.sbatch
 
 <br>
 
-## 測試
+## 測試📋
 
 ```bash
 # Server、Schema、ROI 與資料持久化
@@ -356,7 +359,7 @@ GitHub Actions 會在 push 與 pull request 時執行相同的依賴安裝、Slu
 
 <br>
 
-## 限制與後續方向
+## 限制與後續方向🚀
 
 - Teacher 與 Student 仍可能產生幻覺或未被影像支持的描述
 - Schema 合法只能證明格式正確，不能證明內容具臨床正確性
@@ -366,7 +369,7 @@ GitHub Actions 會在 push 與 pull request 時執行相同的依賴安裝、Slu
 
 <br>
 
-## 文件導覽
+## 文件導覽📃
 
 - [`NCHC_Intern_Presentation.pptx`](Intern%20Presentation/NCHC_Intern_Presentation.pptx)：實習成果簡報
 - [`client_endpoint/README.md`](client_endpoint/README.md)：Windows 使用者端安裝與操作
@@ -378,7 +381,7 @@ GitHub Actions 會在 push 與 pull request 時執行相同的依賴安裝、Slu
 
 <br>
 
-## 參考資料
+## 參考資料📜
 
 1. Zhong, C., et al. [PathVG: A New Benchmark and Dataset for Pathology Visual Grounding](https://arxiv.org/abs/2502.20869). A pathology visual grounding benchmark and the source of the RefPath dataset.
 2. Yang, Y., et al. [SkillOpt: Executive Strategy for Self-Evolving Agent Skills](https://arxiv.org/abs/2605.23904). A text-space optimization framework for improving external skills while keeping model weights frozen.
