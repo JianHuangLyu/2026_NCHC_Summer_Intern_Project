@@ -61,10 +61,6 @@
 
 <table><tr><td><img src="Analysis%20System/0014.jpg" alt="0014"></td></tr></table>
 
-<br><br>
-
 <table><tr><td><img src="Analysis%20System/0015.jpg" alt="0015"></td></tr></table>
-
-<br><br>
 
 <table><tr><td><img src="Analysis%20System/0016.jpg" alt="0016"></td></tr></table>
