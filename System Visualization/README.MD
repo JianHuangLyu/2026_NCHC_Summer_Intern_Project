@@ -1,7 +1,7 @@
 # System Visualization
 說明: 本專案系統之視覺化介面, 採用先登入後租借模型推論所需的運算資源/節點後，才允續進入系統頁面存取系統的功能
 
-<br><br>
+<br>
 
 ## 登入介面
 <table><tr><td><img src="Login/0001.jpg" alt="0001"></td></tr></table>
