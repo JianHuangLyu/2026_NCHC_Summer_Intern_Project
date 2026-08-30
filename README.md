@@ -383,3 +383,13 @@ GitHub Actions 會在 push 與 pull request 時執行相同的依賴安裝、Slu
 1. Zhong, C., et al. [PathVG: A New Benchmark and Dataset for Pathology Visual Grounding](https://arxiv.org/abs/2502.20869). A pathology visual grounding benchmark and the source of the RefPath dataset.
 2. Yang, Y., et al. [SkillOpt: Executive Strategy for Self-Evolving Agent Skills](https://arxiv.org/abs/2605.23904). A text-space optimization framework for improving external skills while keeping model weights frozen.
 3. Sellergren, A., et al. [MedGemma 1.5 Technical Report](https://arxiv.org/abs/2604.05081). The technical report for the medical multimodal teacher model used in this project.
+4. Algomaster, “Client-Server Architecture Explained.”[Online]. Available: https://blog.algomaster.io/p/client-server-architecture-explained
+5. IPDEEP, “代理IP新手指南：什麼是SOCKS5代理？”[Online]. Available: https://www.ipdeep.com/zh-Hant/resources/socks5-proxy-guide
+6. iThome, “[Day25] Python專案－網頁開發－(4) Fast API 進階後端工程師該思考的幾件事.” [Online]. Available: https://ithelp.ithome.com.tw/articles/10366092
+7. Mistral AI, “Model Card for Mistral-Small-3.1-24B-Instruct-2503,”Hugging Face. [Online]. Available: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503
+8. iThome, “Mistral Small 3.1 視覺與語文理解能力領先 Google 新推的 Gemma 3.”[Online]. Available: https://www.ithome.com.tw/news/167926
+9. Vocus, “Google MedGemma 1.5：看懂 CT、聽懂醫囑的專業醫療 AI 模型.”[Online]. Available: https://vocus.cc/article/69690df3fd89780001e3e256
+10. Google, “Gemma 4 模型總覽,” Google AI for Developers. [Online]. Available: https://ai.google.dev/gemma/docs/core?hl=zh-tw
+11. NCHC,　“晶創主機(Nano5) - 使用說明”　 [Online]. Available: https://man.twcc.ai/@AI-Pilot/manual#%E6%99%B6%E5%89%B5%E4%B8%BB%E6%A9%9FNano5---%E4%BD%BF%E7%94%A8%E8%AA%AA%E6%98%8E
+<img width="2521" height="493" alt="image" src="https://github.com/user-attachments/assets/8eeac947-c94b-4ebc-a961-30b0667994e4" />
+
