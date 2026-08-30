@@ -14,7 +14,7 @@
 | **前端** | 樣式工具 | CSS | 負責介面排版、樣式與整體視覺設計 |
 | **後端** | 程式語言 | Python | 負責系統主要邏輯、資料處理、模型流程控制與服務整合 |
 | **後端** | AI / ML Framework | PyTorch | 提供深度學習模型執行、YOLO 訓練與推論及 VLM 推論能力 |
-| **後端** | AI Inference Service | vLLM | 提供大型 VLM 高效 GPU 推論服務，支援批次推論與 OpenAI-compatible API |
+| **後端** | AI Inference Service | vLLM、OpenAI-compatible APIs | 提供大型 VLM 高效 GPU 推論服務，支援批次推論與 OpenAI-compatible API |
 | **後端** | Web API | FastAPI + Uvicorn | 使用 FastAPI 建立 RESTful API，用於處理模型資訊、影像分析病例與報告管理 |
 | **後端** | AI Models | YOLO11m、YOLO11s、Gemma4、Mistral Small 3.1 | YOLO 負責異常區域定位；VLM 用於 ROI 影像分析與結構化報告生成 |
 | **Prompt工程** | Skill / Prompt Optimization | Microsoft SkillOpt | 透過 Teacher–Student 評估與迭代方式最佳化 Skill 及 Prompt，使 Student Model 結構化輸出逐步近似 Teacher Model |
