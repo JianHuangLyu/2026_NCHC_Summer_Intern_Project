@@ -179,8 +179,6 @@ Project/
 │   ├── docs/                        # 維運與交接文件
 │   ├── requirements.txt
 │   └── TECHNOLOGY_STACK.md
-├── Intern Presentation/
-│   └── NCHC_Intern_Presentation.pptx # 實習成果簡報
 ├── .github/workflows/ci.yml
 └── README.md
 ```
